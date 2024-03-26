@@ -1,0 +1,332 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "This is a sample server celler server.",
+        "title": "Nunu Example API",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "API Support",
+            "url": "http://www.swagger.io/support",
+            "email": "support@swagger.io"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0.0"
+    },
+    "host": "localhost:8000",
+    "paths": {
+        "/api/v1/login": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User module"
+                ],
+                "summary": "User login",
+                "parameters": [
+                    {
+                        "description": "params",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Imtiaz246_Thesis-Management-System_api_v1.LoginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Imtiaz246_Thesis-Management-System_api_v1.LoginResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/students/register": {
+            "post": {
+                "description": "To register user account to the system",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User module"
+                ],
+                "summary": "User registration",
+                "parameters": [
+                    {
+                        "description": "params",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Imtiaz246_Thesis-Management-System_api_v1.RegisterRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Imtiaz246_Thesis-Management-System_api_v1.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/students/request-register": {
+            "post": {
+                "description": "To get the user info from the vendor and cache it",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User module"
+                ],
+                "summary": "User request-register",
+                "parameters": [
+                    {
+                        "description": "params",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Imtiaz246_Thesis-Management-System_api_v1.ReqRegister"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Imtiaz246_Thesis-Management-System_api_v1.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/students/verify-email": {
+            "post": {
+                "description": "Confirms the email and sends the pre-saved cache student data got from IIUC server",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User module"
+                ],
+                "summary": "User email verification",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Email confirmation token",
+                        "name": "token",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Imtiaz246_Thesis-Management-System_api_v1.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/user": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User module"
+                ],
+                "summary": "Get user information",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Imtiaz246_Thesis-Management-System_api_v1.GetProfileResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User module"
+                ],
+                "summary": "Update user information",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "github_com_Imtiaz246_Thesis-Management-System_api_v1.GetProfileResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/github_com_Imtiaz246_Thesis-Management-System_api_v1.GetProfileResponseData"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_Imtiaz246_Thesis-Management-System_api_v1.GetProfileResponseData": {
+            "type": "object",
+            "properties": {
+                "nickname": {
+                    "type": "string",
+                    "example": "alan"
+                },
+                "userId": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_Imtiaz246_Thesis-Management-System_api_v1.LoginRequest": {
+            "type": "object",
+            "required": [
+                "password",
+                "universityId"
+            ],
+            "properties": {
+                "password": {
+                    "type": "string",
+                    "example": "123456"
+                },
+                "universityId": {
+                    "type": "string",
+                    "example": "c183074"
+                }
+            }
+        },
+        "github_com_Imtiaz246_Thesis-Management-System_api_v1.LoginResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/github_com_Imtiaz246_Thesis-Management-System_api_v1.LoginResponseData"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_Imtiaz246_Thesis-Management-System_api_v1.LoginResponseData": {
+            "type": "object",
+            "properties": {
+                "accessToken": {
+                    "type": "string"
+                },
+                "refreshToken": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_Imtiaz246_Thesis-Management-System_api_v1.RegisterRequest": {
+            "type": "object",
+            "required": [
+                "mobile",
+                "name",
+                "password",
+                "section"
+            ],
+            "properties": {
+                "alternateMobile": {
+                    "type": "string"
+                },
+                "mobile": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string",
+                    "minLength": 6,
+                    "example": "123456"
+                },
+                "section": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_Imtiaz246_Thesis-Management-System_api_v1.ReqRegister": {
+            "type": "object",
+            "required": [
+                "universityId"
+            ],
+            "properties": {
+                "universityId": {
+                    "type": "string",
+                    "example": "c183074"
+                }
+            }
+        },
+        "github_com_Imtiaz246_Thesis-Management-System_api_v1.Response": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {},
+                "message": {
+                    "type": "string"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "Bearer": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
+    }
+}
