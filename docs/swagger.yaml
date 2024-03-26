@@ -1,0 +1,197 @@
+definitions:
+  github_com_Imtiaz246_Thesis-Management-System_api_v1.GetProfileResponse:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/github_com_Imtiaz246_Thesis-Management-System_api_v1.GetProfileResponseData'
+      message:
+        type: string
+    type: object
+  github_com_Imtiaz246_Thesis-Management-System_api_v1.GetProfileResponseData:
+    properties:
+      nickname:
+        example: alan
+        type: string
+      userId:
+        type: string
+    type: object
+  github_com_Imtiaz246_Thesis-Management-System_api_v1.LoginRequest:
+    properties:
+      email:
+        example: 1234@gmail.com
+        type: string
+      password:
+        example: "123456"
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  github_com_Imtiaz246_Thesis-Management-System_api_v1.LoginResponse:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/github_com_Imtiaz246_Thesis-Management-System_api_v1.LoginResponseData'
+      message:
+        type: string
+    type: object
+  github_com_Imtiaz246_Thesis-Management-System_api_v1.LoginResponseData:
+    properties:
+      accessToken:
+        type: string
+      refreshToken:
+        type: string
+    type: object
+  github_com_Imtiaz246_Thesis-Management-System_api_v1.RegisterRequest:
+    properties:
+      batch:
+        type: integer
+      department:
+        type: string
+      fullName:
+        type: string
+      mobileNo:
+        type: string
+      password:
+        example: "123456"
+        minLength: 6
+        type: string
+      section:
+        type: string
+      universityId:
+        example: c183074
+        type: string
+    required:
+    - batch
+    - department
+    - mobileNo
+    - password
+    - section
+    - universityId
+    type: object
+  github_com_Imtiaz246_Thesis-Management-System_api_v1.Response:
+    properties:
+      code:
+        type: integer
+      data: {}
+      message:
+        type: string
+    type: object
+host: localhost:8000
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: This is a sample server celler server.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Nunu Example API
+  version: 1.0.0
+paths:
+  /api/v1/verify-email/:uid/:token:
+    post:
+      consumes:
+      - application/json
+      description: Confirms the email using which user opened account in the system
+      parameters:
+      - description: Email confirmation token
+        in: path
+        name: token
+        required: true
+        type: string
+      - description: User ID
+        in: path
+        name: uid
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: User email verification
+      tags:
+      - User module
+  /login:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: params
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_Imtiaz246_Thesis-Management-System_api_v1.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_Imtiaz246_Thesis-Management-System_api_v1.LoginResponse'
+      summary: User login
+      tags:
+      - User module
+  /register:
+    post:
+      consumes:
+      - application/json
+      description: To register user account to the system
+      parameters:
+      - description: params
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_Imtiaz246_Thesis-Management-System_api_v1.RegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_Imtiaz246_Thesis-Management-System_api_v1.Response'
+      summary: User registration
+      tags:
+      - User module
+  /user:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_Imtiaz246_Thesis-Management-System_api_v1.GetProfileResponse'
+      security:
+      - Bearer: []
+      summary: Get user information
+      tags:
+      - User module
+    put:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - Bearer: []
+      summary: Update user information
+      tags:
+      - User module
+securityDefinitions:
+  Bearer:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
