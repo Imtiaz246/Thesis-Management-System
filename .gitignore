@@ -1,0 +1,8 @@
+storage
+.idea
+*.log
+deploy/docker-compose/conf
+deploy/docker-compose/data
+config/config.yml
+bin/
+*.sqlite
