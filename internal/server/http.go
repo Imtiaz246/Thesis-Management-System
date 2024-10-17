@@ -1,8 +1,8 @@
 package server
 
 import (
-	apiV1 "github.com/Imtiaz246/Thesis-Management-System/api/v1"
 	"github.com/Imtiaz246/Thesis-Management-System/docs"
+	apiV1 "github.com/Imtiaz246/Thesis-Management-System/internal/apis/v1"
 	"github.com/Imtiaz246/Thesis-Management-System/internal/handler"
 	"github.com/Imtiaz246/Thesis-Management-System/internal/middleware"
 	"github.com/Imtiaz246/Thesis-Management-System/pkg/log"

@@ -2,7 +2,7 @@ package user
 
 import (
 	"context"
-	v1 "github.com/Imtiaz246/Thesis-Management-System/api/v1"
+	apisv1 "github.com/Imtiaz246/Thesis-Management-System/internal/apis/v1"
 	"github.com/Imtiaz246/Thesis-Management-System/internal/model"
 	"github.com/Imtiaz246/Thesis-Management-System/internal/repository"
 	"github.com/Imtiaz246/Thesis-Management-System/internal/service"
@@ -11,16 +11,16 @@ import (
 	"time"
 )
 
-type UserService interface {
-	Register(ctx context.Context, req *v1.RegisterRequest, token string) error
-	ReqRegister(ctx context.Context, req *v1.ReqRegister) (*v1.StudentInfo, error)
-	Login(ctx context.Context, req *v1.LoginRequest) (*v1.LoginResponseData, error)
-	GetProfile(ctx context.Context, userId string) (*v1.GetProfileResponseData, error)
-	UpdateProfile(ctx context.Context, userId string, req *v1.UpdateProfileRequest) error
-	VerifyEmail(ctx context.Context, token string) (*v1.StudentInfo, error)
+type Service interface {
+	Register(ctx context.Context, req *apisv1.RegisterRequest, token string) error
+	ReqRegister(ctx context.Context, req *apisv1.ReqRegister) (*apisv1.StudentInfo, error)
+	Login(ctx context.Context, req *apisv1.LoginRequest) (*apisv1.LoginResponseData, error)
+	GetProfile(ctx context.Context, userId string) (*apisv1.GetProfileResponseData, error)
+	UpdateProfile(ctx context.Context, userId string, req *apisv1.UpdateProfileRequest) error
+	VerifyEmail(ctx context.Context, token string) (*apisv1.StudentInfo, error)
 }
 
-func NewUserService(service *service.Service, userRepo repository.UserRepository) UserService {
+func NewUserService(service *service.Service, userRepo repository.UserRepository) Service {
 	return &userService{
 		userRepo: userRepo,
 		Service:  service,
@@ -32,13 +32,13 @@ type userService struct {
 	*service.Service
 }
 
-func (s *userService) ReqRegister(ctx context.Context, req *v1.ReqRegister) (*v1.StudentInfo, error) {
+func (s *userService) ReqRegister(ctx context.Context, req *apisv1.ReqRegister) (*apisv1.StudentInfo, error) {
 	found, err := s.userRepo.CheckUserExistence(ctx, req.UniversityId)
 	if err != nil {
 		return nil, err
 	}
 	if found {
-		return nil, v1.ErrUserAlreadyExists
+		return nil, apisv1.ErrUserAlreadyExists
 	}
 
 	studentInfo, err := mockStudentInfoApi(req.UniversityId)
@@ -68,11 +68,11 @@ func (s *userService) ReqRegister(ctx context.Context, req *v1.ReqRegister) (*v1
 	return studentInfo, nil
 }
 
-func (s *userService) VerifyEmail(ctx context.Context, token string) (*v1.StudentInfo, error) {
+func (s *userService) VerifyEmail(ctx context.Context, token string) (*apisv1.StudentInfo, error) {
 	return s.userRepo.ReqRegisterCacheGet(ctx, token)
 }
 
-func (s *userService) Register(ctx context.Context, req *v1.RegisterRequest, token string) error {
+func (s *userService) Register(ctx context.Context, req *apisv1.RegisterRequest, token string) error {
 	studentInfo, err := s.userRepo.ReqRegisterCacheGet(ctx, token)
 	if err != nil {
 		return err
@@ -121,17 +121,17 @@ func (s *userService) Register(ctx context.Context, req *v1.RegisterRequest, tok
 	return nil
 }
 
-func (s *userService) Login(ctx context.Context, req *v1.LoginRequest) (*v1.LoginResponseData, error) {
+func (s *userService) Login(ctx context.Context, req *apisv1.LoginRequest) (*apisv1.LoginResponseData, error) {
 	user, err := s.userRepo.GetByUniversityId(ctx, req.UniversityId)
 	if err != nil || user == nil {
-		return nil, v1.ErrUnauthorized
+		return nil, apisv1.ErrUnauthorized
 	}
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password))
 	if err != nil {
 		return nil, err
 	}
 	if !user.IsVerified {
-		return nil, v1.ErrEmailNotVerified
+		return nil, apisv1.ErrEmailNotVerified
 	}
 	accessToken, err := s.Jwt().GenToken(user.UniversityId, time.Now().Add(time.Minute*15))
 	if err != nil {
@@ -143,18 +143,18 @@ func (s *userService) Login(ctx context.Context, req *v1.LoginRequest) (*v1.Logi
 		return nil, err
 	}
 
-	return &v1.LoginResponseData{
+	return &apisv1.LoginResponseData{
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
 	}, nil
 }
 
-func (s *userService) GetProfile(ctx context.Context, userId string) (*v1.GetProfileResponseData, error) {
+func (s *userService) GetProfile(ctx context.Context, userId string) (*apisv1.GetProfileResponseData, error) {
 
 	return nil, nil
 }
 
-func (s *userService) UpdateProfile(ctx context.Context, userId string, req *v1.UpdateProfileRequest) error {
+func (s *userService) UpdateProfile(ctx context.Context, userId string, req *apisv1.UpdateProfileRequest) error {
 
 	return nil
 }

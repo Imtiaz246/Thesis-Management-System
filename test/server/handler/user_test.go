@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	v1 "github.com/Imtiaz246/Thesis-Management-System/api/v1"
+	"github.com/Imtiaz246/Thesis-Management-System/internal/apis/v1"
 	"github.com/Imtiaz246/Thesis-Management-System/internal/handler"
 	"github.com/Imtiaz246/Thesis-Management-System/internal/middleware"
 	jwt2 "github.com/Imtiaz246/Thesis-Management-System/pkg/token"

@@ -3,7 +3,7 @@ package user
 import (
 	"bytes"
 	"fmt"
-	v1 "github.com/Imtiaz246/Thesis-Management-System/api/v1"
+	"github.com/Imtiaz246/Thesis-Management-System/internal/apis/v1"
 	"github.com/Imtiaz246/Thesis-Management-System/internal/templates"
 	"html/template"
 	"time"
