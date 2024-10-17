@@ -1,12 +1,11 @@
 package middleware
 
 import (
-	v1 "github.com/Imtiaz246/Thesis-Management-System/api/v1"
+	apisv1 "github.com/Imtiaz246/Thesis-Management-System/internal/apis/v1"
 	"github.com/Imtiaz246/Thesis-Management-System/pkg/helper/md5"
 	"github.com/Imtiaz246/Thesis-Management-System/pkg/log"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
-	"net/http"
 	"sort"
 	"strings"
 )
@@ -18,7 +17,7 @@ func SignMiddleware(logger *log.Logger, conf *viper.Viper) gin.HandlerFunc {
 		for _, header := range requiredHeaders {
 			value, ok := ctx.Request.Header[header]
 			if !ok || len(value) == 0 {
-				v1.HandleError(ctx, http.StatusBadRequest, v1.ErrBadRequest, nil)
+				apisv1.HandleError(ctx, apisv1.ErrBadRequest, nil)
 				ctx.Abort()
 				return
 			}
@@ -44,7 +43,7 @@ func SignMiddleware(logger *log.Logger, conf *viper.Viper) gin.HandlerFunc {
 		str += conf.GetString("security.api_sign.app_security")
 
 		if ctx.Request.Header.Get("Sign") != strings.ToUpper(md5.Md5(str)) {
-			v1.HandleError(ctx, http.StatusBadRequest, v1.ErrBadRequest, nil)
+			apisv1.HandleError(ctx, apisv1.ErrBadRequest, nil)
 			ctx.Abort()
 			return
 		}

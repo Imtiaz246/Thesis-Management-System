@@ -1,12 +1,11 @@
 package middleware
 
 import (
-	"github.com/Imtiaz246/Thesis-Management-System/api/v1"
+	apisv1 "github.com/Imtiaz246/Thesis-Management-System/internal/apis/v1"
 	"github.com/Imtiaz246/Thesis-Management-System/pkg/log"
 	"github.com/Imtiaz246/Thesis-Management-System/pkg/token"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
-	"net/http"
 )
 
 func StrictAuth(j *token.JWT, logger *log.Logger) gin.HandlerFunc {
@@ -17,7 +16,7 @@ func StrictAuth(j *token.JWT, logger *log.Logger) gin.HandlerFunc {
 				"url":    ctx.Request.URL,
 				"params": ctx.Params,
 			}))
-			v1.HandleError(ctx, http.StatusUnauthorized, v1.ErrUnauthorized, nil)
+			apisv1.HandleError(ctx, apisv1.ErrUnauthorized, nil)
 			ctx.Abort()
 			return
 		}
@@ -28,7 +27,7 @@ func StrictAuth(j *token.JWT, logger *log.Logger) gin.HandlerFunc {
 				"url":    ctx.Request.URL,
 				"params": ctx.Params,
 			}), zap.Error(err))
-			v1.HandleError(ctx, http.StatusUnauthorized, v1.ErrUnauthorized, nil)
+			apisv1.HandleError(ctx, apisv1.ErrUnauthorized, nil)
 			ctx.Abort()
 			return
 		}

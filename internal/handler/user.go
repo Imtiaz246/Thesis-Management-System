@@ -3,19 +3,18 @@ package handler
 import (
 	"context"
 	"fmt"
-	"github.com/Imtiaz246/Thesis-Management-System/api/v1"
+	apisv1 "github.com/Imtiaz246/Thesis-Management-System/internal/apis/v1"
 	userservice "github.com/Imtiaz246/Thesis-Management-System/internal/service/user"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
-	"net/http"
 )
 
 type UserHandler struct {
 	*Handler
-	userService userservice.UserService
+	userService userservice.Service
 }
 
-func NewUserHandler(handler *Handler, userService userservice.UserService) *UserHandler {
+func NewUserHandler(handler *Handler, userService userservice.Service) *UserHandler {
 	return &UserHandler{
 		Handler:     handler,
 		userService: userService,
@@ -33,21 +32,21 @@ func NewUserHandler(handler *Handler, userService userservice.UserService) *User
 // @Success 200 {object} v1.Response
 // @Router /api/v1/students/request-register [post]
 func (h *UserHandler) ReqRegister(ctx *gin.Context) {
-	req := new(v1.ReqRegister)
+	req := new(apisv1.ReqRegister)
 	if err := ctx.ShouldBindJSON(req); err != nil {
-		v1.HandleError(ctx, http.StatusBadRequest, v1.ErrBadRequest, err.Error())
+		apisv1.HandleError(ctx, apisv1.ErrBadRequest, err.Error())
 		return
 	}
 
 	studentInfo, err := h.userService.ReqRegister(context.TODO(), req)
 	if err != nil {
 		h.logger.WithContext(ctx).Error("userService.ReqRegister", zap.Error(err))
-		v1.HandleError(ctx, http.StatusInternalServerError, err, nil)
+		apisv1.HandleError(ctx, err, nil)
 		return
 	}
-	successMsg := fmt.Sprintf("Please verify your email `%s` to complete the further registration process", studentInfo.Email)
 
-	v1.HandleSuccess(ctx, successMsg)
+	successMsg := fmt.Sprintf("Please verify your email `%s` to complete the further registration process", studentInfo.Email)
+	apisv1.HandleSuccess(ctx, successMsg)
 }
 
 // VerifyEmail godoc
@@ -65,11 +64,11 @@ func (h *UserHandler) VerifyEmail(ctx *gin.Context) {
 	studentInfo, err := h.userService.VerifyEmail(ctx, token)
 	if err != nil {
 		h.logger.WithContext(ctx).Error("userService.VerifyEmail", zap.Error(err))
-		v1.HandleError(ctx, http.StatusBadRequest, err, nil)
+		apisv1.HandleError(ctx, err, nil)
 		return
 	}
 
-	v1.HandleSuccess(ctx, studentInfo)
+	apisv1.HandleSuccess(ctx, studentInfo)
 }
 
 // Register godoc
@@ -83,19 +82,19 @@ func (h *UserHandler) VerifyEmail(ctx *gin.Context) {
 // @Success 200 {object} v1.Response
 // @Router /api/v1/students/register [post]
 func (h *UserHandler) Register(ctx *gin.Context) {
-	req := new(v1.RegisterRequest)
+	req := new(apisv1.RegisterRequest)
 	if err := ctx.ShouldBindJSON(req); err != nil {
-		v1.HandleError(ctx, http.StatusBadRequest, v1.ErrBadRequest, err.Error())
+		apisv1.HandleError(ctx, apisv1.ErrBadRequest, err.Error())
 		return
 	}
 
 	if err := h.userService.Register(ctx, req, ctx.Query("token")); err != nil {
 		h.logger.WithContext(ctx).Error("userService.Register", zap.Error(err))
-		v1.HandleError(ctx, http.StatusInternalServerError, err, nil)
+		apisv1.HandleError(ctx, err, nil)
 		return
 	}
 
-	v1.HandleSuccess(ctx, nil)
+	apisv1.HandleSuccess(ctx, nil)
 }
 
 // Login godoc
@@ -109,18 +108,19 @@ func (h *UserHandler) Register(ctx *gin.Context) {
 // @Success 200 {object} v1.LoginResponse
 // @Router /api/v1/login [post]
 func (h *UserHandler) Login(ctx *gin.Context) {
-	var req v1.LoginRequest
+	var req apisv1.LoginRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		v1.HandleError(ctx, http.StatusBadRequest, v1.ErrBadRequest, nil)
+		apisv1.HandleError(ctx, apisv1.ErrBadRequest, nil)
 		return
 	}
 
 	userTokens, err := h.userService.Login(ctx, &req)
 	if err != nil {
-		v1.HandleError(ctx, http.StatusUnauthorized, v1.ErrUnauthorized, nil)
+		apisv1.HandleError(ctx, err, nil)
 		return
 	}
-	v1.HandleSuccess(ctx, userTokens)
+
+	apisv1.HandleSuccess(ctx, userTokens)
 }
 
 // GetProfile godoc
@@ -136,17 +136,17 @@ func (h *UserHandler) Login(ctx *gin.Context) {
 func (h *UserHandler) GetProfile(ctx *gin.Context) {
 	userId := GetUserIdFromCtx(ctx)
 	if userId == "" {
-		v1.HandleError(ctx, http.StatusUnauthorized, v1.ErrUnauthorized, nil)
+		apisv1.HandleError(ctx, apisv1.ErrUnauthorized, nil)
 		return
 	}
 
 	user, err := h.userService.GetProfile(ctx, userId)
 	if err != nil {
-		v1.HandleError(ctx, http.StatusBadRequest, v1.ErrBadRequest, nil)
+		apisv1.HandleError(ctx, err, nil)
 		return
 	}
 
-	v1.HandleSuccess(ctx, user)
+	apisv1.HandleSuccess(ctx, user)
 }
 
 // UpdateProfile godoc
@@ -162,16 +162,16 @@ func (h *UserHandler) GetProfile(ctx *gin.Context) {
 func (h *UserHandler) UpdateProfile(ctx *gin.Context) {
 	userId := GetUserIdFromCtx(ctx)
 
-	var req v1.UpdateProfileRequest
+	var req apisv1.UpdateProfileRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		v1.HandleError(ctx, http.StatusBadRequest, v1.ErrBadRequest, nil)
+		apisv1.HandleError(ctx, apisv1.ErrBadRequest, nil)
 		return
 	}
 
 	if err := h.userService.UpdateProfile(ctx, userId, &req); err != nil {
-		v1.HandleError(ctx, http.StatusInternalServerError, v1.ErrInternalServerError, nil)
+		apisv1.HandleError(ctx, err, nil)
 		return
 	}
 
-	v1.HandleSuccess(ctx, nil)
+	apisv1.HandleSuccess(ctx, nil)
 }

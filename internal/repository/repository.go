@@ -70,7 +70,6 @@ func NewDB(conf *viper.Viper, l *log.Logger) *gorm.DB {
 			panic(err)
 		}
 	default:
-		// todo: currently no real db is configured
 		panic(fmt.Errorf("unknown db"))
 	}
 

@@ -6,9 +6,9 @@ package mock_service
 
 import (
 	context "context"
+	"github.com/Imtiaz246/Thesis-Management-System/internal/apis/v1"
 	reflect "reflect"
 
-	v1 "github.com/Imtiaz246/Thesis-Management-System/api/v1"
 	gomock "github.com/golang/mock/gomock"
 )
 

@@ -1,8 +1,21 @@
+# Storage folder contains logs
 storage
+
+# IDE files
 .idea
+
+# Log files
 *.log
+
+# Docker configuration and data
 deploy/docker-compose/conf
 deploy/docker-compose/data
+
+# Configuration files
 config/config.yml
+
+# Binary files
 bin/
+
+# SQLite databases
 *.sqlite
