@@ -19,3 +19,6 @@ bin/
 
 # SQLite databases
 *.sqlite
+
+# Temporary folder
+tmp
