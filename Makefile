@@ -3,6 +3,7 @@ init:
 	go install github.com/google/wire/cmd/wire@latest
 	go install github.com/golang/mock/mockgen@latest
 	go install github.com/swaggo/swag/cmd/swag@latest
+	go install github.com/air-verse/air@latest
 	go install github.com/go-nunu/nunu@latest
 
 .PHONY: bootstrap
@@ -42,3 +43,7 @@ run: migrate
 .PHONY: migrate
 migrate:
 	go run cmd/migration/main.go
+
+.PHONY: dev
+dev:
+	air

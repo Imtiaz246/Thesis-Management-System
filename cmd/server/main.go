@@ -10,7 +10,7 @@ import (
 	"go.uber.org/zap"
 )
 
-// @title           Nunu Example API
+// @title           TMS server cmd
 // @version         1.0.0
 // @description     This is a sample server celler server.
 // @termsOfService  http://swagger.io/terms/
