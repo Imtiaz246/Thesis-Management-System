@@ -34,7 +34,7 @@ func mockStudentInfoApi(universityId string) (*v1.StudentInfo, error) {
 		CGPA:             3.50,
 		Batch:            47,
 		CompletedCredits: 160,
-		Nationality:      "Bangladeshi",
+		Country:          "Bangladesh",
 		Mobile:           "01773820154",
 		AlternateMobile:  "01773820154",
 	}, nil
