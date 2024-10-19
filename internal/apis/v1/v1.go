@@ -12,18 +12,21 @@ type Response struct {
 	Data    interface{} `json:"data"`
 }
 
-func HandleSuccess(ctx *gin.Context, data interface{}) {
+func HandleSuccess(ctx *gin.Context, data interface{}, msgs ...successMsg) {
 	if data == nil {
 		data = map[string]interface{}{}
 	}
-
-	regCodes, found := codeReg[ErrSuccess]
+	var msg successMsg
+	if len(msg) > 0 {
+		msg = msgs[0]
+	}
+	regCodes, found := successCodeRegistry[msg]
 	if !found {
 		resp := Response{Code: 0, Message: "", Data: data}
 		ctx.JSON(http.StatusOK, resp)
 		return
 	}
-	resp := Response{Code: regCodes.serverCode, Message: ErrSuccess.Error(), Data: data}
+	resp := Response{Code: regCodes.serverCode, Message: msg.String(), Data: data}
 	ctx.JSON(regCodes.httpCode, resp)
 }
 
@@ -31,9 +34,15 @@ func HandleError(ctx *gin.Context, err error, data interface{}) {
 	if data == nil {
 		data = map[string]string{}
 	}
-
-	regCodes, found := codeReg[err]
+	regCodes, found := errCodeRegistry[err]
 	if !found {
+		var svrErr svrErr
+		if errors.As(err, &svrErr) {
+			resp := Response{Code: svrErr.code, Message: svrErr.message, Data: data}
+			ctx.JSON(svrErr.code, resp)
+			return
+		}
+
 		resp := Response{Code: 0, Message: "Unknown Error", Data: data}
 		ctx.JSON(http.StatusInternalServerError, resp)
 		return
@@ -42,27 +51,52 @@ func HandleError(ctx *gin.Context, err error, data interface{}) {
 	ctx.JSON(regCodes.httpCode, resp)
 }
 
-type Error struct {
-	Code    int
-	Message string
+type svrErr struct {
+	code    int
+	message string
 }
 
-type errCodes struct {
+func (e svrErr) Error() string {
+	return e.message
+}
+
+func ServerError(httpCode int, msg string) error {
+	return svrErr{
+		code:    httpCode,
+		message: msg,
+	}
+}
+
+type successMsg string
+
+func (s successMsg) String() string {
+	return string(s)
+}
+
+type codes struct {
 	httpCode   int
 	serverCode int
 }
 
-var codeReg = map[error]errCodes{}
+var (
+	successCodeRegistry = map[successMsg]codes{}
+	errCodeRegistry     = map[error]codes{}
+)
 
-func registerCodes(serverCode, httpCode int, msg string) error {
+func regSuccessCode(serverCode, httpCode int, msg string) successMsg {
+	success := successMsg(msg)
+	successCodeRegistry[success] = codes{
+		serverCode: serverCode,
+		httpCode:   httpCode,
+	}
+	return successMsg(msg)
+}
+
+func regErrCode(serverCode, httpCode int, msg string) error {
 	err := errors.New(msg)
-	codeReg[err] = errCodes{
+	errCodeRegistry[err] = codes{
 		serverCode: serverCode,
 		httpCode:   httpCode,
 	}
 	return err
-}
-
-func (e Error) Error() string {
-	return e.Message
 }
