@@ -54,6 +54,24 @@ func (r *userRepository) GetByUniversityId(ctx context.Context, universityId str
 		}
 		return nil, err
 	}
+	switch user.Role {
+	case model.RoleStudent:
+		user.Student = new(model.Student)
+		if err := r.DB(ctx).Where("user_id = ?", user.ID).First(user.Student).Error; err != nil {
+			return nil, err
+		}
+	case model.RoleStuff:
+		user.Stuff = new(model.Stuff)
+		if err := r.DB(ctx).Where("user_id = ?", user.ID).First(user.Stuff).Error; err != nil {
+			return nil, err
+		}
+	case model.RoleTeacher:
+		user.Teacher = new(model.Teacher)
+		if err := r.DB(ctx).Where("user_id = ?", user.ID).First(user.Teacher).Error; err != nil {
+			return nil, err
+		}
+	}
+
 	return &user, nil
 }
 

@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	apisv1 "github.com/Imtiaz246/Thesis-Management-System/internal/apis/v1"
+	"github.com/Imtiaz246/Thesis-Management-System/internal/apis/v1"
 	"github.com/Imtiaz246/Thesis-Management-System/pkg/log"
 	"github.com/Imtiaz246/Thesis-Management-System/pkg/token"
 	"github.com/gin-gonic/gin"
@@ -16,7 +16,7 @@ func StrictAuth(j *token.JWT, logger *log.Logger) gin.HandlerFunc {
 				"url":    ctx.Request.URL,
 				"params": ctx.Params,
 			}))
-			apisv1.HandleError(ctx, apisv1.ErrUnauthorized, nil)
+			v1.HandleError(ctx, v1.ErrUnauthorized, nil)
 			ctx.Abort()
 			return
 		}
@@ -27,7 +27,7 @@ func StrictAuth(j *token.JWT, logger *log.Logger) gin.HandlerFunc {
 				"url":    ctx.Request.URL,
 				"params": ctx.Params,
 			}), zap.Error(err))
-			apisv1.HandleError(ctx, apisv1.ErrUnauthorized, nil)
+			v1.HandleError(ctx, v1.ErrUnauthorized, nil)
 			ctx.Abort()
 			return
 		}
@@ -66,6 +66,6 @@ func NoStrictAuth(j *token.JWT, logger *log.Logger) gin.HandlerFunc {
 
 func recoveryLoggerFunc(ctx *gin.Context, logger *log.Logger) {
 	if userInfo, ok := ctx.MustGet("claims").(*token.MyCustomClaims); ok {
-		logger.WithValue(ctx, zap.String("UserId", userInfo.UserId))
+		logger.WithValue(ctx, zap.String("UniversityId", userInfo.UniversityId))
 	}
 }

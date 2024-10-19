@@ -16,10 +16,10 @@ func NewHandler(logger *log.Logger) *Handler {
 	}
 }
 
-func GetUserIdFromCtx(ctx *gin.Context) string {
+func GetUserUniIdFromCtx(ctx *gin.Context) string {
 	v, exists := ctx.Get("claims")
 	if !exists {
 		return ""
 	}
-	return v.(*token.MyCustomClaims).UserId
+	return v.(*token.MyCustomClaims).UniversityId
 }

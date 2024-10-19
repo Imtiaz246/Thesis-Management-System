@@ -29,7 +29,7 @@ func NewHTTPServer(
 	)
 
 	// swagger doc
-	docs.SwaggerInfo.BasePath = "/v1"
+	docs.SwaggerInfo.BasePath = "/api/v1"
 	s.GET("/swagger/*any", ginSwagger.WrapHandler(
 		swaggerfiles.Handler,
 		//ginSwagger.URL(fmt.Sprintf("http://localhost:%d/swagger/doc.json", conf.GetInt("app.http.port"))),
@@ -40,7 +40,7 @@ func NewHTTPServer(
 		middleware.CORSMiddleware(),
 		middleware.ResponseLogMiddleware(logger),
 		middleware.RequestLogMiddleware(logger),
-		//middleware.SignMiddleware(log),
+		//middleware.SignMiddleware(logger, conf),
 	)
 	s.GET("/", func(ctx *gin.Context) {
 		logger.WithContext(ctx).Info("hello")
@@ -49,13 +49,18 @@ func NewHTTPServer(
 		})
 	})
 
-	grpV1 := s.Group("/api/v1")
-	grpV1.POST("/login", userHandler.Login)
+	apiv1 := s.Group("/api/v1")
+	apiv1.POST("/login", userHandler.Login)
 	{
-		student := grpV1.Group("students")
-		student.POST("/request-register", userHandler.ReqRegister)
-		student.POST("/verify-email", userHandler.VerifyEmail)
-		student.POST("/register", userHandler.Register)
+		students := apiv1.Group("students")
+		students.POST("/request-register", userHandler.ReqRegister)
+		students.POST("/verify-email", userHandler.VerifyEmail)
+		students.POST("/register", userHandler.Register)
+	}
+	{
+		users := apiv1.Group("users")
+		users.GET("/:uniId/profile", middleware.NoStrictAuth(jwt, logger), userHandler.GetProfile)
+		users.PUT("/profile", middleware.StrictAuth(jwt, logger), userHandler.UpdateProfile)
 	}
 
 	return s
