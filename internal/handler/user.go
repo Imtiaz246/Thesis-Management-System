@@ -3,7 +3,7 @@ package handler
 import (
 	"context"
 	"fmt"
-	apisv1 "github.com/Imtiaz246/Thesis-Management-System/internal/apis/v1"
+	"github.com/Imtiaz246/Thesis-Management-System/internal/apis/v1"
 	userservice "github.com/Imtiaz246/Thesis-Management-System/internal/service/user"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
@@ -32,21 +32,21 @@ func NewUserHandler(handler *Handler, userService userservice.Service) *UserHand
 // @Success 200 {object} v1.Response
 // @Router /api/v1/students/request-register [post]
 func (h *UserHandler) ReqRegister(ctx *gin.Context) {
-	req := new(apisv1.ReqRegister)
+	req := new(v1.ReqRegister)
 	if err := ctx.ShouldBindJSON(req); err != nil {
-		apisv1.HandleError(ctx, apisv1.ErrBadRequest, err.Error())
+		v1.HandleError(ctx, v1.ErrBadRequest, err.Error())
 		return
 	}
 
 	studentInfo, err := h.userService.ReqRegister(context.TODO(), req)
 	if err != nil {
 		h.logger.WithContext(ctx).Error("userService.ReqRegister", zap.Error(err))
-		apisv1.HandleError(ctx, err, nil)
+		v1.HandleError(ctx, err, nil)
 		return
 	}
 
-	successMsg := fmt.Sprintf("Please verify your email `%s` to complete the further registration process", studentInfo.Email)
-	apisv1.HandleSuccess(ctx, successMsg)
+	msg := fmt.Sprintf("Please verify your email `%s` to complete the further registration process", studentInfo.Email)
+	v1.HandleSuccess(ctx, msg)
 }
 
 // VerifyEmail godoc
@@ -64,11 +64,11 @@ func (h *UserHandler) VerifyEmail(ctx *gin.Context) {
 	studentInfo, err := h.userService.VerifyEmail(ctx, token)
 	if err != nil {
 		h.logger.WithContext(ctx).Error("userService.VerifyEmail", zap.Error(err))
-		apisv1.HandleError(ctx, err, nil)
+		v1.HandleError(ctx, err, nil)
 		return
 	}
 
-	apisv1.HandleSuccess(ctx, studentInfo)
+	v1.HandleSuccess(ctx, studentInfo)
 }
 
 // Register godoc
@@ -82,19 +82,19 @@ func (h *UserHandler) VerifyEmail(ctx *gin.Context) {
 // @Success 200 {object} v1.Response
 // @Router /api/v1/students/register [post]
 func (h *UserHandler) Register(ctx *gin.Context) {
-	req := new(apisv1.RegisterRequest)
+	req := new(v1.RegisterRequest)
 	if err := ctx.ShouldBindJSON(req); err != nil {
-		apisv1.HandleError(ctx, apisv1.ErrBadRequest, err.Error())
+		v1.HandleError(ctx, v1.ErrBadRequest, err.Error())
 		return
 	}
 
 	if err := h.userService.Register(ctx, req, ctx.Query("token")); err != nil {
 		h.logger.WithContext(ctx).Error("userService.Register", zap.Error(err))
-		apisv1.HandleError(ctx, err, nil)
+		v1.HandleError(ctx, err, nil)
 		return
 	}
 
-	apisv1.HandleSuccess(ctx, nil)
+	v1.HandleSuccess(ctx, nil)
 }
 
 // Login godoc
@@ -108,19 +108,19 @@ func (h *UserHandler) Register(ctx *gin.Context) {
 // @Success 200 {object} v1.LoginResponse
 // @Router /api/v1/login [post]
 func (h *UserHandler) Login(ctx *gin.Context) {
-	var req apisv1.LoginRequest
+	var req v1.LoginRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		apisv1.HandleError(ctx, apisv1.ErrBadRequest, nil)
+		v1.HandleError(ctx, v1.ErrBadRequest, nil)
 		return
 	}
 
 	userTokens, err := h.userService.Login(ctx, &req)
 	if err != nil {
-		apisv1.HandleError(ctx, err, nil)
+		v1.HandleError(ctx, err, nil)
 		return
 	}
 
-	apisv1.HandleSuccess(ctx, userTokens)
+	v1.HandleSuccess(ctx, userTokens)
 }
 
 // GetProfile godoc
@@ -136,17 +136,17 @@ func (h *UserHandler) Login(ctx *gin.Context) {
 func (h *UserHandler) GetProfile(ctx *gin.Context) {
 	userId := GetUserIdFromCtx(ctx)
 	if userId == "" {
-		apisv1.HandleError(ctx, apisv1.ErrUnauthorized, nil)
+		v1.HandleError(ctx, v1.ErrUnauthorized, nil)
 		return
 	}
 
 	user, err := h.userService.GetProfile(ctx, userId)
 	if err != nil {
-		apisv1.HandleError(ctx, err, nil)
+		v1.HandleError(ctx, err, nil)
 		return
 	}
 
-	apisv1.HandleSuccess(ctx, user)
+	v1.HandleSuccess(ctx, user)
 }
 
 // UpdateProfile godoc
@@ -162,16 +162,16 @@ func (h *UserHandler) GetProfile(ctx *gin.Context) {
 func (h *UserHandler) UpdateProfile(ctx *gin.Context) {
 	userId := GetUserIdFromCtx(ctx)
 
-	var req apisv1.UpdateProfileRequest
+	var req v1.UpdateProfileRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		apisv1.HandleError(ctx, apisv1.ErrBadRequest, nil)
+		v1.HandleError(ctx, v1.ErrBadRequest, nil)
 		return
 	}
 
 	if err := h.userService.UpdateProfile(ctx, userId, &req); err != nil {
-		apisv1.HandleError(ctx, err, nil)
+		v1.HandleError(ctx, err, nil)
 		return
 	}
 
-	apisv1.HandleSuccess(ctx, nil)
+	v1.HandleSuccess(ctx, nil)
 }

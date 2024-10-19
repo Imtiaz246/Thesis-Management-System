@@ -2,7 +2,7 @@ package server
 
 import (
 	"github.com/Imtiaz246/Thesis-Management-System/docs"
-	apiV1 "github.com/Imtiaz246/Thesis-Management-System/internal/apis/v1"
+	"github.com/Imtiaz246/Thesis-Management-System/internal/apis/v1"
 	"github.com/Imtiaz246/Thesis-Management-System/internal/handler"
 	"github.com/Imtiaz246/Thesis-Management-System/internal/middleware"
 	"github.com/Imtiaz246/Thesis-Management-System/pkg/log"
@@ -44,15 +44,15 @@ func NewHTTPServer(
 	)
 	s.GET("/", func(ctx *gin.Context) {
 		logger.WithContext(ctx).Info("hello")
-		apiV1.HandleSuccess(ctx, map[string]interface{}{
+		v1.HandleSuccess(ctx, map[string]interface{}{
 			":)": "Hello world!",
 		})
 	})
 
-	v1 := s.Group("/api/v1")
-	v1.POST("/login", userHandler.Login)
+	grpV1 := s.Group("/api/v1")
+	grpV1.POST("/login", userHandler.Login)
 	{
-		student := v1.Group("students")
+		student := grpV1.Group("students")
 		student.POST("/request-register", userHandler.ReqRegister)
 		student.POST("/verify-email", userHandler.VerifyEmail)
 		student.POST("/register", userHandler.Register)

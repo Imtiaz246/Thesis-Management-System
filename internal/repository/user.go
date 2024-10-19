@@ -4,8 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	apisv1 "github.com/Imtiaz246/Thesis-Management-System/internal/apis/v1"
+	"github.com/Imtiaz246/Thesis-Management-System/internal/apis/v1"
 	"github.com/Imtiaz246/Thesis-Management-System/internal/model"
+	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 	"time"
 )
@@ -16,8 +17,8 @@ type UserRepository interface {
 	GetByUniversityId(ctx context.Context, universityId string) (*model.User, error)
 	CheckUserExistence(ctx context.Context, universityId string) (bool, error)
 	GetByEmail(ctx context.Context, email string) (*model.User, error)
-	ReqRegisterCache(ctx context.Context, token string, studentInfo *apisv1.StudentInfo) error
-	ReqRegisterCacheGet(ctx context.Context, token string) (*apisv1.StudentInfo, error)
+	ReqRegisterCache(ctx context.Context, token string, studentInfo *v1.StudentInfo) error
+	ReqRegisterCacheGet(ctx context.Context, token string) (*v1.StudentInfo, error)
 	ReqRegisterCacheClear(ctx context.Context, token string) error
 }
 
@@ -49,7 +50,7 @@ func (r *userRepository) GetByUniversityId(ctx context.Context, universityId str
 	var user model.User
 	if err := r.DB(ctx).Where("university_id = ?", universityId).First(&user).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, apisv1.ErrNotFound
+			return nil, v1.ErrNotFound
 		}
 		return nil, err
 	}
@@ -58,7 +59,7 @@ func (r *userRepository) GetByUniversityId(ctx context.Context, universityId str
 
 func (r *userRepository) CheckUserExistence(ctx context.Context, universityId string) (bool, error) {
 	user, err := r.GetByUniversityId(ctx, universityId)
-	if err != nil && !errors.Is(err, apisv1.ErrNotFound) {
+	if err != nil && !errors.Is(err, v1.ErrNotFound) {
 		return false, err
 	}
 	if user != nil {
@@ -79,7 +80,7 @@ func (r *userRepository) GetByEmail(ctx context.Context, email string) (*model.U
 	return &user, nil
 }
 
-func (r *userRepository) ReqRegisterCache(ctx context.Context, token string, studentInfo *apisv1.StudentInfo) error {
+func (r *userRepository) ReqRegisterCache(ctx context.Context, token string, studentInfo *v1.StudentInfo) error {
 	data, err := json.Marshal(studentInfo)
 	if err != nil {
 		return err
@@ -92,15 +93,15 @@ func (r *userRepository) ReqRegisterCache(ctx context.Context, token string, stu
 	return nil
 }
 
-func (r *userRepository) ReqRegisterCacheGet(ctx context.Context, token string) (*apisv1.StudentInfo, error) {
+func (r *userRepository) ReqRegisterCacheGet(ctx context.Context, token string) (*v1.StudentInfo, error) {
 	data, err := r.rdb.Get(ctx, token).Bytes()
-	if err != nil {
+	if err != nil && !errors.Is(err, redis.Nil) {
 		return nil, err
 	}
 	if data == nil {
-		return nil, apisv1.ErrNotFound
+		return nil, v1.ErrNotFound
 	}
-	studentInfo := new(apisv1.StudentInfo)
+	studentInfo := new(v1.StudentInfo)
 	if err = json.Unmarshal(data, studentInfo); err != nil {
 		return nil, err
 	}
