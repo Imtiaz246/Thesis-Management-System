@@ -1,4 +1,47 @@
 definitions:
+  github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.BatchInfo:
+    properties:
+      createdAt:
+        type: string
+      createdBy:
+        $ref: '#/definitions/github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.UserInfo'
+      defenceAt:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      preDefenceAt:
+        type: string
+      quota:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.BatchResponse:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.BatchInfo'
+      message:
+        type: string
+    type: object
+  github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.CreateBatchRequest:
+    properties:
+      defenceAt:
+        type: string
+      name:
+        type: string
+      preDefenceAt:
+        type: string
+      quota:
+        type: string
+    required:
+    - defenceAt
+    - name
+    - preDefenceAt
+    type: object
   github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.LoginRequest:
     properties:
       password:
@@ -114,16 +157,18 @@ definitions:
       mobile:
         type: string
     type: object
-  github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.UserResponse:
+  github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.UpdateBatchRequest:
     properties:
-      code:
-        type: integer
-      data:
-        $ref: '#/definitions/github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.UserResponseData'
-      message:
+      defenceAt:
+        type: string
+      name:
+        type: string
+      preDefenceAt:
+        type: string
+      quota:
         type: string
     type: object
-  github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.UserResponseData:
+  github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.UserInfo:
     properties:
       changePass:
         type: boolean
@@ -146,6 +191,15 @@ definitions:
       universityId:
         type: string
     type: object
+  github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.UserResponse:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.UserInfo'
+      message:
+        type: string
+    type: object
 host: localhost:8000
 info:
   contact:
@@ -160,6 +214,118 @@ info:
   title: TMS server cmd
   version: 0.0.1
 paths:
+  /batch:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves a list of batches with optional pagination
+      parameters:
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Number of records per page
+        in: query
+        name: pageSize
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.Response'
+      summary: Get list of batches
+      tags:
+      - Batch module
+    post:
+      consumes:
+      - application/json
+      description: Creates a new batch
+      parameters:
+      - description: Batch creation details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.CreateBatchRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.Response'
+      summary: Create a new batch
+      tags:
+      - Batch module
+  /batch/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes an existing batch
+      parameters:
+      - description: Batch ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.Response'
+      summary: Delete batch
+      tags:
+      - Batch module
+    get:
+      consumes:
+      - application/json
+      description: Retrieves details of a batch
+      parameters:
+      - description: Batch ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.BatchResponse'
+      summary: Get batch details
+      tags:
+      - Batch module
+    put:
+      consumes:
+      - application/json
+      description: Updates an existing batch
+      parameters:
+      - description: Batch ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Batch update details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.UpdateBatchRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.Response'
+      summary: Update batch details
+      tags:
+      - Batch module
   /login:
     post:
       consumes:
@@ -261,7 +427,7 @@ paths:
       summary: Update user information
       tags:
       - User module
-  /users/{uniId}/profile:
+  /users/{uni_id}/profile:
     get:
       consumes:
       - application/json
@@ -269,7 +435,7 @@ paths:
       parameters:
       - description: University ID
         in: path
-        name: uniId
+        name: uni_id
         required: true
         type: string
       produces:

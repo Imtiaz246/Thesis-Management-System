@@ -27,7 +27,7 @@ type LoginResponse struct {
 	Data LoginResponseData
 }
 
-type UserResponseData struct {
+type UserInfo struct {
 	UniversityId string `json:"universityId"`
 	Email        string `json:"email,omitempty"`
 	IsAdmin      bool   `json:"isAdmin,omitempty"`
@@ -43,7 +43,7 @@ type UserResponseData struct {
 
 type UserResponse struct {
 	Response
-	Data UserResponseData
+	Data UserInfo
 }
 
 type StudentInfo struct {

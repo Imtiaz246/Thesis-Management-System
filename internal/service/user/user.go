@@ -16,7 +16,7 @@ type Service interface {
 	Register(ctx context.Context, req *v1.RegisterRequest, token string) error
 	ReqRegister(ctx context.Context, req *v1.ReqRegister) (*v1.StudentInfo, error)
 	Login(ctx context.Context, req *v1.LoginRequest) (*v1.LoginResponseData, error)
-	GetProfile(ctx context.Context, userId, requesterId string) (*v1.UserResponseData, error)
+	GetProfile(ctx context.Context, userId, requesterId string) (*v1.UserInfo, error)
 	UpdateProfile(ctx context.Context, userId string, req *v1.UpdateProfileRequest) error
 	VerifyEmail(ctx context.Context, token string) (*v1.StudentInfo, error)
 }
@@ -153,7 +153,7 @@ func (s *userService) Login(ctx context.Context, req *v1.LoginRequest) (*v1.Logi
 	}, nil
 }
 
-func (s *userService) GetProfile(ctx context.Context, targetUserUniId, requesterUniId string) (*v1.UserResponseData, error) {
+func (s *userService) GetProfile(ctx context.Context, targetUserUniId, requesterUniId string) (*v1.UserInfo, error) {
 	user, err := s.userRepo.GetByUniversityId(ctx, targetUserUniId)
 	if err != nil {
 		return nil, err

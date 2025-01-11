@@ -47,3 +47,9 @@ migrate:
 .PHONY: dev
 dev:
 	air
+
+.PHONY: wire
+wire:
+	wire ./cmd/server/wire
+	wire ./cmd/migration/wire
+	wire ./cmd/task/wire

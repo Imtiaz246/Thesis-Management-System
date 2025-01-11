@@ -20,4 +20,7 @@ var (
 	ErrLinkAlreadyUsed    = regErrCode(1008, http.StatusBadRequest, "The confirmation link has already been utilized.")
 	ErrEmailNotVerified   = regErrCode(1009, http.StatusForbidden, "Access is forbidden: Email verification is required.")
 	ErrPasswordNotMatch   = regErrCode(1010, http.StatusForbidden, "The password entered do not match. Please try again.")
+
+	ErrBatchAlreadyExists = regErrCode(1011, http.StatusBadRequest, "A batch with the specified name already exists.")
+	ErrBatchNotFound      = regErrCode(1012, http.StatusNotFound, "The specified batch could not be found.")
 )

@@ -131,15 +131,15 @@ func (h *UserHandler) Login(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Security Bearer
-// @Param uniId path string true "University ID"
+// @Param uni_id path string true "University ID"
 // @Success 200 {object} v1.UserResponse
 // @Failure 400 {object} v1.Response "Bad Request"
 // @Failure 404 {object} v1.Response "Not Found"
 // @Failure 500 {object} v1.Response "Internal Server Error"
-// @Router /users/{uniId}/profile [get]
+// @Router /users/{uni_id}/profile [get]
 func (h *UserHandler) GetProfile(ctx *gin.Context) {
 	requesterId := GetUserUniIdFromCtx(ctx)
-	targetUserId := ctx.Param("uniId")
+	targetUserId := ctx.Param("uni_id")
 
 	profile, err := h.userService.GetProfile(ctx, targetUserId, requesterId)
 	if err != nil {

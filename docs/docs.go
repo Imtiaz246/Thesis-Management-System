@@ -24,6 +24,176 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/batch": {
+            "get": {
+                "description": "Retrieves a list of batches with optional pagination",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Batch module"
+                ],
+                "summary": "Get list of batches",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Number of records per page",
+                        "name": "pageSize",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Creates a new batch",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Batch module"
+                ],
+                "summary": "Create a new batch",
+                "parameters": [
+                    {
+                        "description": "Batch creation details",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.CreateBatchRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/batch/{id}": {
+            "get": {
+                "description": "Retrieves details of a batch",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Batch module"
+                ],
+                "summary": "Get batch details",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Batch ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.BatchResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Updates an existing batch",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Batch module"
+                ],
+                "summary": "Update batch details",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Batch ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Batch update details",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.UpdateBatchRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Deletes an existing batch",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Batch module"
+                ],
+                "summary": "Delete batch",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Batch ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/login": {
             "post": {
                 "consumes": [
@@ -181,7 +351,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/users/{uniId}/profile": {
+        "/users/{uni_id}/profile": {
             "get": {
                 "security": [
                     {
@@ -203,7 +373,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "University ID",
-                        "name": "uniId",
+                        "name": "uni_id",
                         "in": "path",
                         "required": true
                     }
@@ -238,6 +408,71 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.BatchInfo": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "createdBy": {
+                    "$ref": "#/definitions/github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.UserInfo"
+                },
+                "defenceAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "preDefenceAt": {
+                    "type": "string"
+                },
+                "quota": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.BatchResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.BatchInfo"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.CreateBatchRequest": {
+            "type": "object",
+            "required": [
+                "defenceAt",
+                "name",
+                "preDefenceAt"
+            ],
+            "properties": {
+                "defenceAt": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "preDefenceAt": {
+                    "type": "string"
+                },
+                "quota": {
+                    "type": "string"
+                }
+            }
+        },
         "github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.LoginRequest": {
             "type": "object",
             "required": [
@@ -410,21 +645,24 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.UserResponse": {
+        "github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.UpdateBatchRequest": {
             "type": "object",
             "properties": {
-                "code": {
-                    "type": "integer"
+                "defenceAt": {
+                    "type": "string"
                 },
-                "data": {
-                    "$ref": "#/definitions/github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.UserResponseData"
+                "name": {
+                    "type": "string"
                 },
-                "message": {
+                "preDefenceAt": {
+                    "type": "string"
+                },
+                "quota": {
                     "type": "string"
                 }
             }
         },
-        "github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.UserResponseData": {
+        "github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.UserInfo": {
             "type": "object",
             "properties": {
                 "changePass": {
@@ -455,6 +693,20 @@ const docTemplate = `{
                     "$ref": "#/definitions/github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.TeacherInfo"
                 },
                 "universityId": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.UserResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.UserInfo"
+                },
+                "message": {
                     "type": "string"
                 }
             }

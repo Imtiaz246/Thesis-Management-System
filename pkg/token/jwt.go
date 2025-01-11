@@ -54,6 +54,9 @@ func (j *JWT) ParseToken(tokenString string) (*MyCustomClaims, error) {
 	token, err := jwt.ParseWithClaims(tokenString, &MyCustomClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return j.key, nil
 	})
+	if token == nil {
+		return nil, errors.New("invalid token")
+	}
 	if claims, ok := token.Claims.(*MyCustomClaims); ok && token.Valid {
 		return claims, nil
 	} else {

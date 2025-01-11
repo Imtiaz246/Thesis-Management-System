@@ -19,6 +19,7 @@ func NewHTTPServer(
 	conf *viper.Viper,
 	jwt *token.JWT,
 	userHandler *handler.UserHandler,
+	batchHandler *handler.BatchHandler,
 ) *http.Server {
 	gin.SetMode(gin.DebugMode)
 	s := http.NewServer(
@@ -59,8 +60,16 @@ func NewHTTPServer(
 	}
 	{
 		users := apiv1.Group("users")
-		users.GET("/:uniId/profile", middleware.NoStrictAuth(jwt, logger), userHandler.GetProfile)
+		users.GET("/:uni_id/profile", middleware.NoStrictAuth(jwt, logger), userHandler.GetProfile)
 		users.PUT("/profile", middleware.StrictAuth(jwt, logger), userHandler.UpdateProfile)
+	}
+	{
+		batchGroup := apiv1.Group("batch")
+		batchGroup.GET("/", batchHandler.ListBatch)
+		batchGroup.GET("/:id", batchHandler.GetBatch)
+		batchGroup.POST("/", middleware.StrictAuth(jwt, logger), batchHandler.CreateBatch)
+		batchGroup.PUT("/:id", middleware.StrictAuth(jwt, logger), batchHandler.UpdateBatch)
+		batchGroup.DELETE("/:id", middleware.StrictAuth(jwt, logger), batchHandler.DeleteBatch)
 	}
 
 	return s

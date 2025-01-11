@@ -25,8 +25,8 @@ func (u *User) TableName() string {
 	return "users"
 }
 
-func (u *User) ConvertToMinimalApiFormat() *v1.UserResponseData {
-	resp := &v1.UserResponseData{
+func (u *User) ConvertToMinimalApiFormat() *v1.UserInfo {
+	resp := &v1.UserInfo{
 		UniversityId: u.UniversityId,
 		Email:        u.Email,
 		Role:         u.Role.String(),
@@ -45,8 +45,8 @@ func (u *User) ConvertToMinimalApiFormat() *v1.UserResponseData {
 	return resp
 }
 
-func (u *User) ConvertToApiFormat() *v1.UserResponseData {
-	resp := &v1.UserResponseData{
+func (u *User) ConvertToApiFormat() *v1.UserInfo {
+	resp := &v1.UserInfo{
 		UniversityId: u.UniversityId,
 		Email:        u.Email,
 		IsAdmin:      u.IsAdmin,
