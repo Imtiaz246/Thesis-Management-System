@@ -2,6 +2,7 @@ package user
 
 import (
 	"context"
+	"errors"
 	"github.com/Imtiaz246/Thesis-Management-System/internal/apis/v1"
 	"github.com/Imtiaz246/Thesis-Management-System/internal/model"
 	"github.com/Imtiaz246/Thesis-Management-System/internal/repository"
@@ -15,7 +16,7 @@ type Service interface {
 	Register(ctx context.Context, req *v1.RegisterRequest, token string) error
 	ReqRegister(ctx context.Context, req *v1.ReqRegister) (*v1.StudentInfo, error)
 	Login(ctx context.Context, req *v1.LoginRequest) (*v1.LoginResponseData, error)
-	GetProfile(ctx context.Context, userId string) (*v1.GetProfileResponseData, error)
+	GetProfile(ctx context.Context, userId, requesterId string) (*v1.UserInfo, error)
 	UpdateProfile(ctx context.Context, userId string, req *v1.UpdateProfileRequest) error
 	VerifyEmail(ctx context.Context, token string) (*v1.StudentInfo, error)
 }
@@ -92,10 +93,10 @@ func (s *userService) Register(ctx context.Context, req *v1.RegisterRequest, tok
 		IsVerified:   true,
 		ChangePass:   false,
 		Student: &model.Student{
-			Name:            req.Name,
-			Mobile:          req.Mobile,
-			AlternateMobile: req.AlternateMobile,
-			Section:         req.Section,
+			Name:        req.Name,
+			Mobile:      req.Mobile,
+			AlterMobile: req.AlternateMobile,
+			Section:     req.Section,
 
 			Department: studentInfo.Department,
 			CGPA:       studentInfo.CGPA,
@@ -123,17 +124,27 @@ func (s *userService) Register(ctx context.Context, req *v1.RegisterRequest, tok
 
 func (s *userService) Login(ctx context.Context, req *v1.LoginRequest) (*v1.LoginResponseData, error) {
 	user, err := s.userRepo.GetByUniversityId(ctx, req.UniversityId)
-	if err != nil || user == nil {
-		return nil, v1.ErrUnauthorized
+	if err != nil {
+		if errors.Is(err, v1.ErrNotFound) {
+			return nil, v1.ErrUnauthorized
+		}
+		return nil, v1.ErrInternalServerError
 	}
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password))
 	if err != nil {
-		return nil, err
+		return nil, v1.ErrPasswordNotMatch
 	}
 	if !user.IsVerified {
 		return nil, v1.ErrEmailNotVerified
 	}
-	accessToken, err := s.Jwt().GenToken(user.UniversityId, time.Now().Add(time.Minute*15))
+
+	accessToken, err := s.Jwt().GenToken(user.UniversityId,
+		time.Now().Add(func() time.Duration {
+			if s.HTTPRunMode() == "dev" {
+				return time.Hour * 24 * 15
+			}
+			return time.Minute * 15
+		}()))
 	if err != nil {
 		return nil, err
 	}
@@ -149,9 +160,16 @@ func (s *userService) Login(ctx context.Context, req *v1.LoginRequest) (*v1.Logi
 	}, nil
 }
 
-func (s *userService) GetProfile(ctx context.Context, userId string) (*v1.GetProfileResponseData, error) {
+func (s *userService) GetProfile(ctx context.Context, targetUserUniId, requesterUniId string) (*v1.UserInfo, error) {
+	user, err := s.userRepo.GetByUniversityId(ctx, targetUserUniId)
+	if err != nil {
+		return nil, err
+	}
+	if user.UniversityId == requesterUniId {
+		return user.ConvertToApiFormat(), nil
+	}
 
-	return nil, nil
+	return user.ConvertToMinimalApiFormat(), nil
 }
 
 func (s *userService) UpdateProfile(ctx context.Context, userId string, req *v1.UpdateProfileRequest) error {

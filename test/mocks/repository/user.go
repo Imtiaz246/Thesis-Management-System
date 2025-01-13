@@ -8,6 +8,7 @@ import (
 	context "context"
 	reflect "reflect"
 
+	v1 "github.com/Imtiaz246/Thesis-Management-System/internal/apis/v1"
 	model "github.com/Imtiaz246/Thesis-Management-System/internal/model"
 	gomock "github.com/golang/mock/gomock"
 )
@@ -33,6 +34,21 @@ func NewMockUserRepository(ctrl *gomock.Controller) *MockUserRepository {
 // EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockUserRepository) EXPECT() *MockUserRepositoryMockRecorder {
 	return m.recorder
+}
+
+// CheckUserExistence mocks base method.
+func (m *MockUserRepository) CheckUserExistence(ctx context.Context, universityId string) (bool, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CheckUserExistence", ctx, universityId)
+	ret0, _ := ret[0].(bool)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CheckUserExistence indicates an expected call of CheckUserExistence.
+func (mr *MockUserRepositoryMockRecorder) CheckUserExistence(ctx, universityId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CheckUserExistence", reflect.TypeOf((*MockUserRepository)(nil).CheckUserExistence), ctx, universityId)
 }
 
 // Create mocks base method.
@@ -64,19 +80,62 @@ func (mr *MockUserRepositoryMockRecorder) GetByEmail(ctx, email interface{}) *go
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByEmail", reflect.TypeOf((*MockUserRepository)(nil).GetByEmail), ctx, email)
 }
 
-// GetByID mocks base method.
-func (m *MockUserRepository) GetByID(ctx context.Context, id string) (*model.User, error) {
+// GetByUniversityId mocks base method.
+func (m *MockUserRepository) GetByUniversityId(ctx context.Context, universityId string) (*model.User, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetByID", ctx, id)
+	ret := m.ctrl.Call(m, "GetByUniversityId", ctx, universityId)
 	ret0, _ := ret[0].(*model.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// GetByID indicates an expected call of GetByID.
-func (mr *MockUserRepositoryMockRecorder) GetByID(ctx, id interface{}) *gomock.Call {
+// GetByUniversityId indicates an expected call of GetByUniversityId.
+func (mr *MockUserRepositoryMockRecorder) GetByUniversityId(ctx, universityId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByID", reflect.TypeOf((*MockUserRepository)(nil).GetByID), ctx, id)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByUniversityId", reflect.TypeOf((*MockUserRepository)(nil).GetByUniversityId), ctx, universityId)
+}
+
+// ReqRegisterCache mocks base method.
+func (m *MockUserRepository) ReqRegisterCache(ctx context.Context, token string, studentInfo *v1.StudentInfo) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ReqRegisterCache", ctx, token, studentInfo)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// ReqRegisterCache indicates an expected call of ReqRegisterCache.
+func (mr *MockUserRepositoryMockRecorder) ReqRegisterCache(ctx, token, studentInfo interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ReqRegisterCache", reflect.TypeOf((*MockUserRepository)(nil).ReqRegisterCache), ctx, token, studentInfo)
+}
+
+// ReqRegisterCacheClear mocks base method.
+func (m *MockUserRepository) ReqRegisterCacheClear(ctx context.Context, token string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ReqRegisterCacheClear", ctx, token)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// ReqRegisterCacheClear indicates an expected call of ReqRegisterCacheClear.
+func (mr *MockUserRepositoryMockRecorder) ReqRegisterCacheClear(ctx, token interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ReqRegisterCacheClear", reflect.TypeOf((*MockUserRepository)(nil).ReqRegisterCacheClear), ctx, token)
+}
+
+// ReqRegisterCacheGet mocks base method.
+func (m *MockUserRepository) ReqRegisterCacheGet(ctx context.Context, token string) (*v1.StudentInfo, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ReqRegisterCacheGet", ctx, token)
+	ret0, _ := ret[0].(*v1.StudentInfo)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ReqRegisterCacheGet indicates an expected call of ReqRegisterCacheGet.
+func (mr *MockUserRepositoryMockRecorder) ReqRegisterCacheGet(ctx, token interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ReqRegisterCacheGet", reflect.TypeOf((*MockUserRepository)(nil).ReqRegisterCacheGet), ctx, token)
 }
 
 // Update mocks base method.

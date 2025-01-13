@@ -11,8 +11,8 @@ import (
 )
 
 // @title           TMS server cmd
-// @version         1.0.0
-// @description     This is a sample server celler server.
+// @version         0.0.1
+// @description     Command to run the server.
 // @termsOfService  http://swagger.io/terms/
 // @contact.name   API Support
 // @contact.url    http://www.swagger.io/support

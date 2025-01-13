@@ -11,7 +11,8 @@ import (
 	"github.com/Imtiaz246/Thesis-Management-System/internal/repository"
 	"github.com/Imtiaz246/Thesis-Management-System/internal/server"
 	"github.com/Imtiaz246/Thesis-Management-System/internal/service"
-	userservice "github.com/Imtiaz246/Thesis-Management-System/internal/service/user"
+	"github.com/Imtiaz246/Thesis-Management-System/internal/service/batch"
+	"github.com/Imtiaz246/Thesis-Management-System/internal/service/user"
 	"github.com/Imtiaz246/Thesis-Management-System/pkg/app"
 	"github.com/Imtiaz246/Thesis-Management-System/pkg/helper/sid"
 	"github.com/Imtiaz246/Thesis-Management-System/pkg/log"
@@ -25,7 +26,7 @@ import (
 // Injectors from wire.go:
 
 func NewWire(viperViper *viper.Viper, logger *log.Logger) (*app.App, func(), error) {
-	jwtJWT := token.NewJwt(viperViper)
+	jwt := token.NewJwt(viperViper)
 	handlerHandler := handler.NewHandler(logger)
 	db := repository.NewDB(viperViper, logger)
 	client := repository.NewRedis(viperViper)
@@ -33,11 +34,14 @@ func NewWire(viperViper *viper.Viper, logger *log.Logger) (*app.App, func(), err
 	transaction := repository.NewTransaction(repositoryRepository)
 	sidSid := sid.NewSid()
 	mailerMailer := mailer.NewMailer(viperViper)
-	serviceService := service.NewService(transaction, logger, sidSid, jwtJWT, mailerMailer, viperViper)
+	serviceService := service.NewService(transaction, logger, sidSid, jwt, mailerMailer, viperViper)
 	userRepository := repository.NewUserRepository(repositoryRepository)
-	userService := userservice.NewUserService(serviceService, userRepository)
+	userService := user.NewUserService(serviceService, userRepository)
 	userHandler := handler.NewUserHandler(handlerHandler, userService)
-	httpServer := server.NewHTTPServer(logger, viperViper, jwtJWT, userHandler)
+	batchRepository := repository.NewBatchRepository(repositoryRepository)
+	batchService := batch.NewBatchService(serviceService, userRepository, batchRepository)
+	batchHandler := handler.NewBatchHandler(handlerHandler, batchService)
+	httpServer := server.NewHTTPServer(logger, viperViper, jwt, userHandler, batchHandler)
 	job := server.NewJob(logger)
 	appApp := newApp(httpServer, job)
 	return appApp, func() {
@@ -46,11 +50,11 @@ func NewWire(viperViper *viper.Viper, logger *log.Logger) (*app.App, func(), err
 
 // wire.go:
 
-var repositorySet = wire.NewSet(repository.NewDB, repository.NewRedis, repository.NewRepository, repository.NewTransaction, repository.NewUserRepository)
+var repositorySet = wire.NewSet(repository.NewDB, repository.NewRedis, repository.NewRepository, repository.NewTransaction, repository.NewUserRepository, repository.NewBatchRepository)
 
-var serviceSet = wire.NewSet(service.NewService, userservice.NewUserService)
+var serviceSet = wire.NewSet(service.NewService, user.NewUserService, batch.NewBatchService)
 
-var handlerSet = wire.NewSet(handler.NewHandler, handler.NewUserHandler)
+var handlerSet = wire.NewSet(handler.NewHandler, handler.NewUserHandler, handler.NewBatchHandler)
 
 var serverSet = wire.NewSet(server.NewHTTPServer, server.NewJob, server.NewTask)
 

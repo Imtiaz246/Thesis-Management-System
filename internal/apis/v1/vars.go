@@ -3,11 +3,11 @@ package v1
 import "net/http"
 
 var (
-	StatusOk                      = regSuccessCode(200, http.StatusOK, "OK")
-	OperationCompletionSuccessful = regSuccessCode(200, http.StatusOK, "Operation completed successfully.")
+	StatusOk            = regSuccessCode(200, http.StatusOK, "OK")
+	OperationSuccessful = regSuccessCode(200, http.StatusOK, "Operation completed successfully.")
 
 	ErrBadRequest          = regErrCode(400, http.StatusBadRequest, "The request could not be understood by the server due to malformed syntax.")
-	ErrUnauthorized        = regErrCode(401, http.StatusUnauthorized, "Authentication is required and has failed or has not yet been provided.")
+	ErrUnauthorized        = regErrCode(401, http.StatusUnauthorized, "Authentication is required. Please ensure you provide valid credentials.")
 	ErrNotFound            = regErrCode(404, http.StatusNotFound, "The requested resource could not be found.")
 	ErrInternalServerError = regErrCode(500, http.StatusInternalServerError, "An internal server error has occurred.")
 
@@ -19,4 +19,8 @@ var (
 	ErrLinkExpired        = regErrCode(1007, http.StatusBadRequest, "The confirmation link has expired.")
 	ErrLinkAlreadyUsed    = regErrCode(1008, http.StatusBadRequest, "The confirmation link has already been utilized.")
 	ErrEmailNotVerified   = regErrCode(1009, http.StatusForbidden, "Access is forbidden: Email verification is required.")
+	ErrPasswordNotMatch   = regErrCode(1010, http.StatusForbidden, "The password entered do not match. Please try again.")
+
+	ErrBatchAlreadyExists = regErrCode(1011, http.StatusBadRequest, "A batch with the specified name already exists.")
+	ErrBatchNotFound      = regErrCode(1012, http.StatusNotFound, "The specified batch could not be found.")
 )

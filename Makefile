@@ -14,7 +14,7 @@ bootstrap:
 
 .PHONY: mock
 mock:
-	mockgen -source=internal/service/user.go -destination test/mocks/service/user.go
+	mockgen -source=internal/service/user/user.go -destination test/mocks/service/user.go
 	mockgen -source=internal/repository/user.go -destination test/mocks/repository/user.go
 	mockgen -source=internal/repository/repository.go -destination test/mocks/repository/repository.go
 
@@ -47,3 +47,9 @@ migrate:
 .PHONY: dev
 dev:
 	air
+
+.PHONY: wire
+wire:
+	wire ./cmd/server/wire
+	wire ./cmd/migration/wire
+	wire ./cmd/task/wire
