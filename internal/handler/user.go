@@ -30,7 +30,7 @@ func NewUserHandler(handler *Handler, userService userservice.Service) *UserHand
 // @Produce json
 // @Param request body v1.ReqRegister true "params"
 // @Success 200 {object} v1.Response
-// @Router /api/v1/students/request-register [post]
+// @Router /students/request-register [post]
 func (h *UserHandler) ReqRegister(ctx *gin.Context) {
 	req := new(v1.ReqRegister)
 	if err := ctx.ShouldBindJSON(req); err != nil {
@@ -58,7 +58,7 @@ func (h *UserHandler) ReqRegister(ctx *gin.Context) {
 // @Produce json
 // @Param token query string true "Email confirmation token"
 // @Success 200 {object} v1.Response
-// @Router /api/v1/students/verify-email [post]
+// @Router /students/verify-email [post]
 func (h *UserHandler) VerifyEmail(ctx *gin.Context) {
 	token := ctx.Query("token")
 	studentInfo, err := h.userService.VerifyEmail(ctx, token)
@@ -80,7 +80,7 @@ func (h *UserHandler) VerifyEmail(ctx *gin.Context) {
 // @Produce json
 // @Param request body v1.RegisterRequest true "params"
 // @Success 200 {object} v1.Response
-// @Router /api/v1/students/register [post]
+// @Router /students/register [post]
 func (h *UserHandler) Register(ctx *gin.Context) {
 	req := new(v1.RegisterRequest)
 	if err := ctx.ShouldBindJSON(req); err != nil {
@@ -106,7 +106,7 @@ func (h *UserHandler) Register(ctx *gin.Context) {
 // @Produce json
 // @Param request body v1.LoginRequest true "params"
 // @Success 200 {object} v1.LoginResponse
-// @Router /api/v1/login [post]
+// @Router /login [post]
 func (h *UserHandler) Login(ctx *gin.Context) {
 	var req v1.LoginRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -126,27 +126,28 @@ func (h *UserHandler) Login(ctx *gin.Context) {
 // GetProfile godoc
 // @Summary Get user information
 // @Schemes
-// @Description
+// @Description Retrieves the profile information of a user
 // @Tags User module
 // @Accept json
 // @Produce json
 // @Security Bearer
-// @Success 200 {object} v1.GetProfileResponse
-// @Router /user [get]
+// @Param uni_id path string true "University ID"
+// @Success 200 {object} v1.UserResponse
+// @Failure 400 {object} v1.Response "Bad Request"
+// @Failure 404 {object} v1.Response "Not Found"
+// @Failure 500 {object} v1.Response "Internal Server Error"
+// @Router /users/{uni_id}/profile [get]
 func (h *UserHandler) GetProfile(ctx *gin.Context) {
-	userId := GetUserIdFromCtx(ctx)
-	if userId == "" {
-		v1.HandleError(ctx, v1.ErrUnauthorized, nil)
-		return
-	}
+	requesterId := GetUserUniIdFromCtx(ctx)
+	targetUserId := ctx.Param("uni_id")
 
-	user, err := h.userService.GetProfile(ctx, userId)
+	profile, err := h.userService.GetProfile(ctx, targetUserId, requesterId)
 	if err != nil {
 		v1.HandleError(ctx, err, nil)
 		return
 	}
 
-	v1.HandleSuccess(ctx, user)
+	v1.HandleSuccess(ctx, profile)
 }
 
 // UpdateProfile godoc
@@ -160,7 +161,7 @@ func (h *UserHandler) GetProfile(ctx *gin.Context) {
 // @Success 200
 // @Router /user [put]
 func (h *UserHandler) UpdateProfile(ctx *gin.Context) {
-	userId := GetUserIdFromCtx(ctx)
+	userId := GetUserUniIdFromCtx(ctx)
 
 	var req v1.UpdateProfileRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {

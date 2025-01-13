@@ -22,7 +22,7 @@ func HandleSuccess(ctx *gin.Context, data interface{}, msgs ...successMsg) {
 	}
 	regCodes, found := successCodeRegistry[msg]
 	if !found {
-		resp := Response{Code: 0, Message: "", Data: data}
+		resp := Response{Code: http.StatusOK, Message: "", Data: data}
 		ctx.JSON(http.StatusOK, resp)
 		return
 	}
@@ -36,14 +36,14 @@ func HandleError(ctx *gin.Context, err error, data interface{}) {
 	}
 	regCodes, found := errCodeRegistry[err]
 	if !found {
-		var svrErr svrErr
+		var svrErr serverError
 		if errors.As(err, &svrErr) {
 			resp := Response{Code: svrErr.code, Message: svrErr.message, Data: data}
 			ctx.JSON(svrErr.code, resp)
 			return
 		}
 
-		resp := Response{Code: 0, Message: "Unknown Error", Data: data}
+		resp := Response{Code: 0, Message: err.Error(), Data: data}
 		ctx.JSON(http.StatusInternalServerError, resp)
 		return
 	}
@@ -51,19 +51,19 @@ func HandleError(ctx *gin.Context, err error, data interface{}) {
 	ctx.JSON(regCodes.httpCode, resp)
 }
 
-type svrErr struct {
+type serverError struct {
 	code    int
 	message string
 }
 
-func (e svrErr) Error() string {
+func (e serverError) Error() string {
 	return e.message
 }
 
-func ServerError(httpCode int, msg string) error {
-	return svrErr{
+func ServerError(httpCode int, err error) error {
+	return serverError{
 		code:    httpCode,
-		message: msg,
+		message: err.Error(),
 	}
 }
 

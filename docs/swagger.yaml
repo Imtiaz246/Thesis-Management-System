@@ -1,22 +1,48 @@
 definitions:
-  github_com_Imtiaz246_Thesis-Management-System_api_v1.GetProfileResponse:
+  github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.BatchInfo:
+    properties:
+      createdAt:
+        type: string
+      createdBy:
+        $ref: '#/definitions/github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.UserInfo'
+      defenceAt:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      preDefenceAt:
+        type: string
+      quota:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.BatchResponse:
     properties:
       code:
         type: integer
       data:
-        $ref: '#/definitions/github_com_Imtiaz246_Thesis-Management-System_api_v1.GetProfileResponseData'
+        $ref: '#/definitions/github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.BatchInfo'
       message:
         type: string
     type: object
-  github_com_Imtiaz246_Thesis-Management-System_api_v1.GetProfileResponseData:
+  github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.CreateBatchRequest:
     properties:
-      nickname:
-        example: alan
+      defenceAt:
         type: string
-      userId:
+      name:
         type: string
+      preDefenceAt:
+        type: string
+      quota:
+        type: string
+    required:
+    - defenceAt
+    - name
+    - preDefenceAt
     type: object
-  github_com_Imtiaz246_Thesis-Management-System_api_v1.LoginRequest:
+  github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.LoginRequest:
     properties:
       password:
         example: "123456"
@@ -28,23 +54,23 @@ definitions:
     - password
     - universityId
     type: object
-  github_com_Imtiaz246_Thesis-Management-System_api_v1.LoginResponse:
+  github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.LoginResponse:
     properties:
       code:
         type: integer
       data:
-        $ref: '#/definitions/github_com_Imtiaz246_Thesis-Management-System_api_v1.LoginResponseData'
+        $ref: '#/definitions/github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.LoginResponseData'
       message:
         type: string
     type: object
-  github_com_Imtiaz246_Thesis-Management-System_api_v1.LoginResponseData:
+  github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.LoginResponseData:
     properties:
       accessToken:
         type: string
       refreshToken:
         type: string
     type: object
-  github_com_Imtiaz246_Thesis-Management-System_api_v1.RegisterRequest:
+  github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.RegisterRequest:
     properties:
       alternateMobile:
         type: string
@@ -64,7 +90,7 @@ definitions:
     - password
     - section
     type: object
-  github_com_Imtiaz246_Thesis-Management-System_api_v1.ReqRegister:
+  github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.ReqRegister:
     properties:
       universityId:
         example: c183074
@@ -72,11 +98,105 @@ definitions:
     required:
     - universityId
     type: object
-  github_com_Imtiaz246_Thesis-Management-System_api_v1.Response:
+  github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.Response:
     properties:
       code:
         type: integer
       data: {}
+      message:
+        type: string
+    type: object
+  github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.StudentInfo:
+    properties:
+      alternateMobile:
+        type: string
+      batch:
+        type: integer
+      cgpa:
+        type: number
+      completedCredits:
+        type: integer
+      country:
+        type: string
+      department:
+        type: string
+      email:
+        type: string
+      fullName:
+        type: string
+      gender:
+        type: string
+      mobile:
+        type: string
+      section:
+        type: string
+      universityId:
+        type: string
+    type: object
+  github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.StuffInfo:
+    properties:
+      alternateMobile:
+        type: string
+      department:
+        type: string
+      fullName:
+        type: string
+      mobile:
+        type: string
+    type: object
+  github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.TeacherInfo:
+    properties:
+      alternateMobile:
+        type: string
+      department:
+        type: string
+      designation:
+        type: string
+      fullName:
+        type: string
+      mobile:
+        type: string
+    type: object
+  github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.UpdateBatchRequest:
+    properties:
+      defenceAt:
+        type: string
+      name:
+        type: string
+      preDefenceAt:
+        type: string
+      quota:
+        type: string
+    type: object
+  github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.UserInfo:
+    properties:
+      changePass:
+        type: boolean
+      email:
+        type: string
+      gender:
+        type: string
+      isAdmin:
+        type: boolean
+      isVerified:
+        type: boolean
+      role:
+        type: string
+      student:
+        $ref: '#/definitions/github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.StudentInfo'
+      stuff:
+        $ref: '#/definitions/github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.StuffInfo'
+      teacher:
+        $ref: '#/definitions/github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.TeacherInfo'
+      universityId:
+        type: string
+    type: object
+  github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.UserResponse:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.UserInfo'
       message:
         type: string
     type: object
@@ -86,15 +206,127 @@ info:
     email: support@swagger.io
     name: API Support
     url: http://www.swagger.io/support
-  description: This is a sample server celler server.
+  description: Command to run the server.
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   termsOfService: http://swagger.io/terms/
-  title: Nunu Example API
-  version: 1.0.0
+  title: TMS server cmd
+  version: 0.0.1
 paths:
-  /api/v1/login:
+  /batch:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves a list of batches with optional pagination
+      parameters:
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Number of records per page
+        in: query
+        name: pageSize
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.Response'
+      summary: Get list of batches
+      tags:
+      - Batch module
+    post:
+      consumes:
+      - application/json
+      description: Creates a new batch
+      parameters:
+      - description: Batch creation details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.CreateBatchRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.Response'
+      summary: Create a new batch
+      tags:
+      - Batch module
+  /batch/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes an existing batch
+      parameters:
+      - description: Batch ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.Response'
+      summary: Delete batch
+      tags:
+      - Batch module
+    get:
+      consumes:
+      - application/json
+      description: Retrieves details of a batch
+      parameters:
+      - description: Batch ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.BatchResponse'
+      summary: Get batch details
+      tags:
+      - Batch module
+    put:
+      consumes:
+      - application/json
+      description: Updates an existing batch
+      parameters:
+      - description: Batch ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Batch update details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.UpdateBatchRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.Response'
+      summary: Update batch details
+      tags:
+      - Batch module
+  /login:
     post:
       consumes:
       - application/json
@@ -104,18 +336,18 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/github_com_Imtiaz246_Thesis-Management-System_api_v1.LoginRequest'
+          $ref: '#/definitions/github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.LoginRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_Imtiaz246_Thesis-Management-System_api_v1.LoginResponse'
+            $ref: '#/definitions/github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.LoginResponse'
       summary: User login
       tags:
       - User module
-  /api/v1/students/register:
+  /students/register:
     post:
       consumes:
       - application/json
@@ -126,18 +358,18 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/github_com_Imtiaz246_Thesis-Management-System_api_v1.RegisterRequest'
+          $ref: '#/definitions/github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.RegisterRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_Imtiaz246_Thesis-Management-System_api_v1.Response'
+            $ref: '#/definitions/github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.Response'
       summary: User registration
       tags:
       - User module
-  /api/v1/students/request-register:
+  /students/request-register:
     post:
       consumes:
       - application/json
@@ -148,18 +380,18 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/github_com_Imtiaz246_Thesis-Management-System_api_v1.ReqRegister'
+          $ref: '#/definitions/github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.ReqRegister'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_Imtiaz246_Thesis-Management-System_api_v1.Response'
+            $ref: '#/definitions/github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.Response'
       summary: User request-register
       tags:
       - User module
-  /api/v1/students/verify-email:
+  /students/verify-email:
     post:
       consumes:
       - application/json
@@ -177,26 +409,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_Imtiaz246_Thesis-Management-System_api_v1.Response'
+            $ref: '#/definitions/github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.Response'
       summary: User email verification
       tags:
       - User module
   /user:
-    get:
-      consumes:
-      - application/json
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_Imtiaz246_Thesis-Management-System_api_v1.GetProfileResponse'
-      security:
-      - Bearer: []
-      summary: Get user information
-      tags:
-      - User module
     put:
       consumes:
       - application/json
@@ -208,6 +425,41 @@ paths:
       security:
       - Bearer: []
       summary: Update user information
+      tags:
+      - User module
+  /users/{uni_id}/profile:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves the profile information of a user
+      parameters:
+      - description: University ID
+        in: path
+        name: uni_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.UserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.Response'
+      security:
+      - Bearer: []
+      summary: Get user information
       tags:
       - User module
 securityDefinitions:

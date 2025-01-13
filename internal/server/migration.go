@@ -37,6 +37,9 @@ func (m *Migrate) Start(ctx context.Context) error {
 	if err := m.db.AutoMigrate(&model.Stuff{}); err != nil {
 		m.log.Error("Failed to migrate Stuff")
 	}
+	if err := m.db.AutoMigrate(&model.Batch{}); err != nil {
+		m.log.Error("Failed to migrate Batch")
+	}
 	m.log.Info("AutoMigrate success")
 	os.Exit(0)
 	return nil
