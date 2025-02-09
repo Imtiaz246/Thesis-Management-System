@@ -10,7 +10,7 @@ type User struct {
 	UniversityId string `gorm:"unique;index;primaryKey;not null"`
 	Email        string `gorm:"unique;index;not null"`
 	Password     string `gorm:"not null"`
-	IsAdmin      bool
+	IsAdmin      bool   `gorm:"default:false"`
 	Role         role   `gorm:"default:1"`
 	Gender       gender `gorm:"default:1"`
 	IsVerified   bool   `gorm:"default:false"`

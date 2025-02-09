@@ -56,8 +56,10 @@ func (s *batchService) CreateBatch(ctx context.Context, requesterUniId string, r
 	}
 
 	batch := &model.Batch{
-		Name:  req.Name,
-		Quota: req.Quota,
+		Name:    req.Name,
+		Quota:   req.Quota,
+		MinCGPA: req.MinCGPARequired,
+		MinCH:   req.MinCHRequired,
 
 		TeamRegDeadline: req.TeamRegDeadline,
 		MaxTeamMember:   req.MaxTeamMember,
@@ -65,6 +67,10 @@ func (s *batchService) CreateBatch(ctx context.Context, requesterUniId string, r
 		PreDefenceAt:    req.PreDefenceAt,
 		DefenceAt:       req.DefenceAt,
 		CreatedBy:       requester,
+	}
+
+	if err = batch.VerifyBeforeUpsert(); err != nil {
+		return err
 	}
 
 	err = s.batchRepo.Create(ctx, batch)
@@ -125,11 +131,17 @@ func (s *batchService) UpdateBatch(ctx context.Context, requesterUniId string, i
 
 	utils.SetIfNonDefault(&req.Name, &batch.Name)
 	utils.SetIfNonDefault(&req.Quota, &batch.Quota)
+	utils.SetIfNonDefault(&req.MinCHRequired, &batch.MinCH)
+	utils.SetIfNonDefault(&req.MinCGPARequired, &batch.MinCGPA)
 	utils.SetIfNonDefault(&req.MaxTeamMember, &batch.MaxTeamMember)
 	utils.SetIfNonDefault(&req.MaxTeacherPref, &batch.MaxTeacherPref)
 	utils.SetIfNonDefault(req.TeamRegDeadline, &batch.TeamRegDeadline)
 	utils.SetIfNonDefault(req.PreDefenceAt, &batch.PreDefenceAt)
 	utils.SetIfNonDefault(req.DefenceAt, &batch.DefenceAt)
+
+	if err = batch.VerifyBeforeUpsert(); err != nil {
+		return err
+	}
 
 	err = s.batchRepo.Update(ctx, batch)
 	if err != nil {

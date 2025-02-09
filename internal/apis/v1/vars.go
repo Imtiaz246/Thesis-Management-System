@@ -21,6 +21,8 @@ var (
 	ErrEmailNotVerified   = regErrCode(1009, http.StatusForbidden, "Access is forbidden: Email verification is required.")
 	ErrPasswordNotMatch   = regErrCode(1010, http.StatusForbidden, "The password entered do not match. Please try again.")
 
-	ErrBatchAlreadyExists = regErrCode(1011, http.StatusBadRequest, "A batch with the specified name already exists.")
-	ErrBatchNotFound      = regErrCode(1012, http.StatusNotFound, "The specified batch could not be found.")
+	ErrBatchAlreadyExists     = regErrCode(1011, http.StatusBadRequest, "A batch with the specified name already exists.")
+	ErrBatchNotFound          = regErrCode(1012, http.StatusNotFound, "The specified batch could not be found.")
+	ErrInvalidTeamRegDeadline = regErrCode(1013, http.StatusBadRequest, "Team registration deadline should be before pre-defence date.")
+	ErrInvalidPreDefenceDate  = regErrCode(1014, http.StatusBadRequest, "Pre-defence date should be before defence date.")
 )

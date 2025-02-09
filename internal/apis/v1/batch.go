@@ -3,8 +3,10 @@ package v1
 import "time"
 
 type CreateBatchRequest struct {
-	Name  string `json:"name" binding:"required"`
-	Quota string `json:"quota"`
+	Name            string  `json:"name" binding:"required"`
+	Quota           string  `json:"quota"`
+	MinCGPARequired float32 `json:"minCGPARequired"`
+	MinCHRequired   uint8   `json:"minCHRequired" binding:"required"`
 
 	TeamRegDeadline time.Time `json:"teamRegDeadline" binding:"required"`
 	MaxTeamMember   uint8     `json:"maxTeamMember" binding:"required"`
@@ -14,8 +16,10 @@ type CreateBatchRequest struct {
 }
 
 type UpdateBatchRequest struct {
-	Name  string `json:"name"`
-	Quota string `json:"quota"`
+	Name            string  `json:"name"`
+	Quota           string  `json:"quota"`
+	MinCGPARequired float32 `json:"minCGPARequired"`
+	MinCHRequired   uint8   `json:"minCHRequired"`
 
 	TeamRegDeadline *time.Time `json:"teamRegDeadline" `
 	MaxTeamMember   uint8      `json:"maxTeamMember"`
@@ -29,6 +33,8 @@ type BatchInfo struct {
 	Name  string `json:"name"`
 	Quota string `json:"quota"`
 
+	MinCGPARequired float32   `json:"minCGPARequired"`
+	MinCHRequired   uint8     `json:"minCHRequired"`
 	TeamRegDeadline time.Time `json:"teamRegDeadline"`
 	MaxTeamMember   uint8     `json:"maxTeamMember"`
 	MaxTeacherPref  uint8     `json:"maxTeacherPref"`

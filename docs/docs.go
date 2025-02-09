@@ -429,6 +429,12 @@ const docTemplate = `{
                 "maxTeamMember": {
                     "type": "integer"
                 },
+                "minCGPARequired": {
+                    "type": "number"
+                },
+                "minCHRequired": {
+                    "type": "integer"
+                },
                 "name": {
                     "type": "string"
                 },
@@ -466,6 +472,7 @@ const docTemplate = `{
                 "defenceAt",
                 "maxTeacherPref",
                 "maxTeamMember",
+                "minCHRequired",
                 "name",
                 "preDefenceAt",
                 "teamRegDeadline"
@@ -478,6 +485,12 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "maxTeamMember": {
+                    "type": "integer"
+                },
+                "minCGPARequired": {
+                    "type": "number"
+                },
+                "minCHRequired": {
                     "type": "integer"
                 },
                 "name": {
@@ -676,6 +689,12 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "maxTeamMember": {
+                    "type": "integer"
+                },
+                "minCGPARequired": {
+                    "type": "number"
+                },
+                "minCHRequired": {
                     "type": "integer"
                 },
                 "name": {

@@ -13,6 +13,10 @@ definitions:
         type: integer
       maxTeamMember:
         type: integer
+      minCGPARequired:
+        type: number
+      minCHRequired:
+        type: integer
       name:
         type: string
       preDefenceAt:
@@ -41,6 +45,10 @@ definitions:
         type: integer
       maxTeamMember:
         type: integer
+      minCGPARequired:
+        type: number
+      minCHRequired:
+        type: integer
       name:
         type: string
       preDefenceAt:
@@ -53,6 +61,7 @@ definitions:
     - defenceAt
     - maxTeacherPref
     - maxTeamMember
+    - minCHRequired
     - name
     - preDefenceAt
     - teamRegDeadline
@@ -179,6 +188,10 @@ definitions:
       maxTeacherPref:
         type: integer
       maxTeamMember:
+        type: integer
+      minCGPARequired:
+        type: number
+      minCHRequired:
         type: integer
       name:
         type: string

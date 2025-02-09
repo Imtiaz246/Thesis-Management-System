@@ -422,6 +422,12 @@
                 "maxTeamMember": {
                     "type": "integer"
                 },
+                "minCGPARequired": {
+                    "type": "number"
+                },
+                "minCHRequired": {
+                    "type": "integer"
+                },
                 "name": {
                     "type": "string"
                 },
@@ -459,6 +465,7 @@
                 "defenceAt",
                 "maxTeacherPref",
                 "maxTeamMember",
+                "minCHRequired",
                 "name",
                 "preDefenceAt",
                 "teamRegDeadline"
@@ -471,6 +478,12 @@
                     "type": "integer"
                 },
                 "maxTeamMember": {
+                    "type": "integer"
+                },
+                "minCGPARequired": {
+                    "type": "number"
+                },
+                "minCHRequired": {
                     "type": "integer"
                 },
                 "name": {
@@ -669,6 +682,12 @@
                     "type": "integer"
                 },
                 "maxTeamMember": {
+                    "type": "integer"
+                },
+                "minCGPARequired": {
+                    "type": "number"
+                },
+                "minCHRequired": {
                     "type": "integer"
                 },
                 "name": {
