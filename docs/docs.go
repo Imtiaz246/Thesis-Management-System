@@ -423,6 +423,12 @@ const docTemplate = `{
                 "id": {
                     "type": "integer"
                 },
+                "maxTeacherPref": {
+                    "type": "integer"
+                },
+                "maxTeamMember": {
+                    "type": "integer"
+                },
                 "name": {
                     "type": "string"
                 },
@@ -430,6 +436,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "quota": {
+                    "type": "string"
+                },
+                "teamRegDeadline": {
                     "type": "string"
                 },
                 "updatedAt": {
@@ -455,12 +464,21 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "defenceAt",
+                "maxTeacherPref",
+                "maxTeamMember",
                 "name",
-                "preDefenceAt"
+                "preDefenceAt",
+                "teamRegDeadline"
             ],
             "properties": {
                 "defenceAt": {
                     "type": "string"
+                },
+                "maxTeacherPref": {
+                    "type": "integer"
+                },
+                "maxTeamMember": {
+                    "type": "integer"
                 },
                 "name": {
                     "type": "string"
@@ -469,6 +487,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "quota": {
+                    "type": "string"
+                },
+                "teamRegDeadline": {
                     "type": "string"
                 }
             }
@@ -651,6 +672,12 @@ const docTemplate = `{
                 "defenceAt": {
                     "type": "string"
                 },
+                "maxTeacherPref": {
+                    "type": "integer"
+                },
+                "maxTeamMember": {
+                    "type": "integer"
+                },
                 "name": {
                     "type": "string"
                 },
@@ -658,6 +685,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "quota": {
+                    "type": "string"
+                },
+                "teamRegDeadline": {
                     "type": "string"
                 }
             }

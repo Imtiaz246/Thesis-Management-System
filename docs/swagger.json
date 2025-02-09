@@ -416,6 +416,12 @@
                 "id": {
                     "type": "integer"
                 },
+                "maxTeacherPref": {
+                    "type": "integer"
+                },
+                "maxTeamMember": {
+                    "type": "integer"
+                },
                 "name": {
                     "type": "string"
                 },
@@ -423,6 +429,9 @@
                     "type": "string"
                 },
                 "quota": {
+                    "type": "string"
+                },
+                "teamRegDeadline": {
                     "type": "string"
                 },
                 "updatedAt": {
@@ -448,12 +457,21 @@
             "type": "object",
             "required": [
                 "defenceAt",
+                "maxTeacherPref",
+                "maxTeamMember",
                 "name",
-                "preDefenceAt"
+                "preDefenceAt",
+                "teamRegDeadline"
             ],
             "properties": {
                 "defenceAt": {
                     "type": "string"
+                },
+                "maxTeacherPref": {
+                    "type": "integer"
+                },
+                "maxTeamMember": {
+                    "type": "integer"
                 },
                 "name": {
                     "type": "string"
@@ -462,6 +480,9 @@
                     "type": "string"
                 },
                 "quota": {
+                    "type": "string"
+                },
+                "teamRegDeadline": {
                     "type": "string"
                 }
             }
@@ -644,6 +665,12 @@
                 "defenceAt": {
                     "type": "string"
                 },
+                "maxTeacherPref": {
+                    "type": "integer"
+                },
+                "maxTeamMember": {
+                    "type": "integer"
+                },
                 "name": {
                     "type": "string"
                 },
@@ -651,6 +678,9 @@
                     "type": "string"
                 },
                 "quota": {
+                    "type": "string"
+                },
+                "teamRegDeadline": {
                     "type": "string"
                 }
             }

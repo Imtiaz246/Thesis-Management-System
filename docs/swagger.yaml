@@ -9,11 +9,17 @@ definitions:
         type: string
       id:
         type: integer
+      maxTeacherPref:
+        type: integer
+      maxTeamMember:
+        type: integer
       name:
         type: string
       preDefenceAt:
         type: string
       quota:
+        type: string
+      teamRegDeadline:
         type: string
       updatedAt:
         type: string
@@ -31,16 +37,25 @@ definitions:
     properties:
       defenceAt:
         type: string
+      maxTeacherPref:
+        type: integer
+      maxTeamMember:
+        type: integer
       name:
         type: string
       preDefenceAt:
         type: string
       quota:
         type: string
+      teamRegDeadline:
+        type: string
     required:
     - defenceAt
+    - maxTeacherPref
+    - maxTeamMember
     - name
     - preDefenceAt
+    - teamRegDeadline
     type: object
   github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.LoginRequest:
     properties:
@@ -161,11 +176,17 @@ definitions:
     properties:
       defenceAt:
         type: string
+      maxTeacherPref:
+        type: integer
+      maxTeamMember:
+        type: integer
       name:
         type: string
       preDefenceAt:
         type: string
       quota:
+        type: string
+      teamRegDeadline:
         type: string
     type: object
   github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.UserInfo:

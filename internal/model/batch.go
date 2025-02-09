@@ -8,8 +8,13 @@ import (
 
 type Batch struct {
 	gorm.Model
-	Name         string `gorm:"unique;not null"`
-	Quota        string
+	Name  string `gorm:"unique;not null"`
+	Quota string
+
+	TeamRegDeadline time.Time // TeamRegDeadline is the cutoff date/time by which team registration must be completed.
+	MaxTeamMember   uint8     // MaxTeamMember defines the maximum number of members allowed in a team.
+	MaxTeacherPref  uint8     // MaxTeacherPref indicates the maximum number of teacher selections that a team can list as preferences.
+
 	PreDefenceAt time.Time
 	DefenceAt    time.Time
 
@@ -23,10 +28,15 @@ func (b *Batch) TableName() string {
 
 func (b *Batch) convertToMinimalApiFormat() *v1.BatchInfo {
 	return &v1.BatchInfo{
-		ID:           b.ID,
-		Name:         b.Name,
-		PreDefenceAt: b.PreDefenceAt,
-		DefenceAt:    b.DefenceAt,
+		ID:    b.ID,
+		Name:  b.Name,
+		Quota: b.Quota,
+
+		TeamRegDeadline: b.TeamRegDeadline,
+		MaxTeamMember:   b.MaxTeamMember,
+		MaxTeacherPref:  b.MaxTeacherPref,
+		PreDefenceAt:    b.PreDefenceAt,
+		DefenceAt:       b.DefenceAt,
 
 		CreatedAt: b.CreatedAt,
 		UpdatedAt: b.UpdatedAt,

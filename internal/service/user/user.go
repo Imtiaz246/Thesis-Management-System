@@ -137,7 +137,14 @@ func (s *userService) Login(ctx context.Context, req *v1.LoginRequest) (*v1.Logi
 	if !user.IsVerified {
 		return nil, v1.ErrEmailNotVerified
 	}
-	accessToken, err := s.Jwt().GenToken(user.UniversityId, time.Now().Add(time.Minute*15))
+
+	accessToken, err := s.Jwt().GenToken(user.UniversityId,
+		time.Now().Add(func() time.Duration {
+			if s.HTTPRunMode() == "dev" {
+				return time.Hour * 24 * 15
+			}
+			return time.Minute * 15
+		}()))
 	if err != nil {
 		return nil, err
 	}

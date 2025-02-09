@@ -7,6 +7,7 @@ import (
 	"github.com/Imtiaz246/Thesis-Management-System/internal/model"
 	"github.com/Imtiaz246/Thesis-Management-System/internal/repository"
 	"github.com/Imtiaz246/Thesis-Management-System/internal/service"
+	"github.com/Imtiaz246/Thesis-Management-System/internal/service/utils"
 )
 
 type Service interface {
@@ -55,11 +56,15 @@ func (s *batchService) CreateBatch(ctx context.Context, requesterUniId string, r
 	}
 
 	batch := &model.Batch{
-		Name:         req.Name,
-		Quota:        req.Quota,
-		PreDefenceAt: req.PreDefenceAt,
-		DefenceAt:    req.DefenceAt,
-		CreatedBy:    requester,
+		Name:  req.Name,
+		Quota: req.Quota,
+
+		TeamRegDeadline: req.TeamRegDeadline,
+		MaxTeamMember:   req.MaxTeamMember,
+		MaxTeacherPref:  req.MaxTeacherPref,
+		PreDefenceAt:    req.PreDefenceAt,
+		DefenceAt:       req.DefenceAt,
+		CreatedBy:       requester,
 	}
 
 	err = s.batchRepo.Create(ctx, batch)
@@ -86,7 +91,7 @@ func (s *batchService) ListBatches(ctx context.Context) ([]*v1.BatchInfo, error)
 func (s *batchService) GetBatchById(ctx context.Context, id uint) (*v1.BatchInfo, error) {
 	batch, err := s.batchRepo.GetById(ctx, id)
 	if err != nil {
-		if errors.Is(err, v1.ErrNotFound) {
+		if errors.Is(err, v1.ErrBatchNotFound) {
 			return nil, v1.ErrBatchNotFound
 		}
 		return nil, v1.ErrInternalServerError
@@ -118,9 +123,13 @@ func (s *batchService) UpdateBatch(ctx context.Context, requesterUniId string, i
 		return v1.ErrInternalServerError
 	}
 
-	batch.Name = req.Name
-	batch.PreDefenceAt = req.PreDefenceAt
-	batch.DefenceAt = req.DefenceAt
+	utils.SetIfNonDefault(&req.Name, &batch.Name)
+	utils.SetIfNonDefault(&req.Quota, &batch.Quota)
+	utils.SetIfNonDefault(&req.MaxTeamMember, &batch.MaxTeamMember)
+	utils.SetIfNonDefault(&req.MaxTeacherPref, &batch.MaxTeacherPref)
+	utils.SetIfNonDefault(req.TeamRegDeadline, &batch.TeamRegDeadline)
+	utils.SetIfNonDefault(req.PreDefenceAt, &batch.PreDefenceAt)
+	utils.SetIfNonDefault(req.DefenceAt, &batch.DefenceAt)
 
 	err = s.batchRepo.Update(ctx, batch)
 	if err != nil {

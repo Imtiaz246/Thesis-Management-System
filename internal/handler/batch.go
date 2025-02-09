@@ -62,6 +62,15 @@ func (h *BatchHandler) CreateBatch(ctx *gin.Context) {
 		return
 	}
 
+	if req.TeamRegDeadline.After(req.PreDefenceAt) {
+		v1.HandleError(ctx, v1.ErrBadRequest, "Team registration deadline should be before pre-defence date")
+		return
+	}
+	if req.PreDefenceAt.After(req.DefenceAt) {
+		v1.HandleError(ctx, v1.ErrBadRequest, "Pre-defence date should be before defence date")
+		return
+	}
+
 	requesterUniId := GetUserUniIdFromCtx(ctx)
 	err := h.batchService.CreateBatch(ctx, requesterUniId, req)
 	if err != nil {

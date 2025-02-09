@@ -52,3 +52,7 @@ func (s *Service) Mlr() *mailer.Mailer {
 func (s *Service) Conf() *viper.Viper {
 	return s.conf
 }
+
+func (s *Service) HTTPRunMode() string {
+	return s.conf.GetString("http.mode")
+}

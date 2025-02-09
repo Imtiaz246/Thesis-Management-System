@@ -21,7 +21,7 @@ func NewHTTPServer(
 	userHandler *handler.UserHandler,
 	batchHandler *handler.BatchHandler,
 ) *http.Server {
-	gin.SetMode(gin.DebugMode)
+	gin.SetMode(gin.ReleaseMode)
 	s := http.NewServer(
 		gin.Default(),
 		logger,
