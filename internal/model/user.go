@@ -6,11 +6,12 @@ import (
 )
 
 type User struct {
+	// TODO: remove gorm.Model. Consider only UniversityID as primary key
 	gorm.Model
 	UniversityId string `gorm:"unique;index;primaryKey;not null"`
 	Email        string `gorm:"unique;index;not null"`
 	Password     string `gorm:"not null"`
-	IsAdmin      bool
+	IsAdmin      bool   `gorm:"default:false"`
 	Role         role   `gorm:"default:1"`
 	Gender       gender `gorm:"default:1"`
 	IsVerified   bool   `gorm:"default:false"`
@@ -21,7 +22,7 @@ type User struct {
 	Stuff   *Stuff
 }
 
-func (u *User) TableName() string {
+func (_ *User) TableName() string {
 	return "users"
 }
 
@@ -34,7 +35,7 @@ func (u *User) ConvertToMinimalApiFormat() *v1.UserInfo {
 	}
 	switch {
 	case u.Role == RoleStudent && u.Student != nil:
-		resp.Student = u.Student.convertToMinimalApiFormat()
+		resp.Student = u.Student.ConvertToMinimalApiFormat()
 	case u.Role == RoleTeacher && u.Teacher != nil:
 		resp.Teacher = u.Teacher.convertToApiFormat()
 	case u.Role == RoleStuff && u.Stuff != nil:
@@ -57,7 +58,7 @@ func (u *User) ConvertToApiFormat() *v1.UserInfo {
 	}
 	switch {
 	case u.Role == RoleStudent && u.Student != nil:
-		resp.Student = u.Student.convertToApiFormat()
+		resp.Student = u.Student.ConvertToApiFormat()
 	case u.Role == RoleTeacher && u.Teacher != nil:
 		resp.Teacher = u.Teacher.convertToApiFormat()
 	case u.Role == RoleStuff && u.Stuff != nil:
@@ -102,14 +103,14 @@ type Student struct {
 	Country          string
 	Mobile           string
 	AlterMobile      string
-	UserID           uint `gorm:"unique;not null"`
+	UserID           uint `gorm:"unique;not null;constraint:OnDelete:CASCADE,OnUpdate:CASCADE;"`
 }
 
-func (s *Student) TableName() string {
+func (_ *Student) TableName() string {
 	return "students"
 }
 
-func (s *Student) convertToMinimalApiFormat() *v1.StudentInfo {
+func (s *Student) ConvertToMinimalApiFormat() *v1.StudentInfo {
 	return &v1.StudentInfo{
 		FullName:   s.Name,
 		Country:    s.Country,
@@ -118,7 +119,7 @@ func (s *Student) convertToMinimalApiFormat() *v1.StudentInfo {
 	}
 }
 
-func (s *Student) convertToApiFormat() *v1.StudentInfo {
+func (s *Student) ConvertToApiFormat() *v1.StudentInfo {
 	return &v1.StudentInfo{
 		FullName:         s.Name,
 		Country:          s.Country,
@@ -139,10 +140,10 @@ type Teacher struct {
 	Designation string
 	Mobile      string
 	AlterMobile string
-	UserID      uint `gorm:"unique;not null"`
+	UserID      uint `gorm:"unique;not null;constraint:OnDelete:CASCADE,OnUpdate:CASCADE;"`
 }
 
-func (t *Teacher) TableName() string {
+func (_ *Teacher) TableName() string {
 	return "teachers"
 }
 
@@ -162,10 +163,10 @@ type Stuff struct {
 	Mobile      string
 	AlterMobile string
 	Department  string
-	UserID      uint `gorm:"unique:not null"`
+	UserID      uint `gorm:"unique;not null;constraint:OnDelete:CASCADE,OnUpdate:CASCADE;"`
 }
 
-func (s *Stuff) TableName() string {
+func (_ *Stuff) TableName() string {
 	return "stuffs"
 }
 

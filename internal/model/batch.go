@@ -8,21 +8,23 @@ import (
 
 type Batch struct {
 	gorm.Model
-	Name  string `gorm:"unique;not null"`
-	Quota string
+	Name    string `gorm:"unique;not null"`
+	Quota   string
+	MinCGPA float64
+	MinCH   uint16 `gorm:"not null"`
 
-	TeamRegDeadline time.Time // TeamRegDeadline is the cutoff date/time by which team registration must be completed.
-	MaxTeamMember   uint8     // MaxTeamMember defines the maximum number of members allowed in a team.
-	MaxTeacherPref  uint8     // MaxTeacherPref indicates the maximum number of teacher selections that a team can list as preferences.
-
-	PreDefenceAt time.Time
-	DefenceAt    time.Time
+	TeamRegDeadline time.Time `gorm:"not null"`
+	MaxTeamMember   uint8     `gorm:"not null"`
+	MaxTeacherPref  uint8     `gorm:"not null"`
+	PreDefenceAt    time.Time `gorm:"not null"`
+	DefenceAt       time.Time `gorm:"not null"`
+	Closed          bool      `gorm:"not null;index;default:false"`
 
 	CreatedByID uint  `gorm:"not null"`
-	CreatedBy   *User `gorm:"foreignKey:CreatedByID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL"`
+	CreatedBy   *User `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL"`
 }
 
-func (b *Batch) TableName() string {
+func (_ *Batch) TableName() string {
 	return "batches"
 }
 
@@ -32,11 +34,14 @@ func (b *Batch) convertToMinimalApiFormat() *v1.BatchInfo {
 		Name:  b.Name,
 		Quota: b.Quota,
 
+		MinCGPARequired: b.MinCGPA,
+		MinCHRequired:   b.MinCH,
 		TeamRegDeadline: b.TeamRegDeadline,
 		MaxTeamMember:   b.MaxTeamMember,
 		MaxTeacherPref:  b.MaxTeacherPref,
 		PreDefenceAt:    b.PreDefenceAt,
 		DefenceAt:       b.DefenceAt,
+		Closed:          b.Closed,
 
 		CreatedAt: b.CreatedAt,
 		UpdatedAt: b.UpdatedAt,
@@ -50,4 +55,50 @@ func (b *Batch) ConvertToApiFormat() *v1.BatchInfo {
 	}
 
 	return resp
+}
+
+func (b *Batch) VerifyBeforeUpsert() error {
+	if b.TeamRegDeadline.After(b.PreDefenceAt) {
+		return v1.ErrInvalidTeamRegDeadline
+	}
+	if b.PreDefenceAt.After(b.DefenceAt) {
+		return v1.ErrInvalidPreDefenceDate
+	}
+	return nil
+}
+
+type BatchStage uint8
+
+const (
+	StageTeamRegistration BatchStage = iota + 1
+	StagePreDefence
+	StageDefence
+	StageResult
+)
+
+func (b *Batch) GetCurrentStage() BatchStage {
+	now := time.Now()
+	switch {
+	case now.Before(b.TeamRegDeadline):
+		return StageTeamRegistration
+	case now.Before(b.PreDefenceAt):
+		return StagePreDefence
+	case now.Before(b.DefenceAt):
+		return StageDefence
+	default:
+		return StageResult
+	}
+}
+
+type BatchRegistration struct {
+	gorm.Model
+
+	BatchID   uint     `gorm:"not null;uniqueIndex:idx_batch_student"`
+	StudentID uint     `gorm:"not null;uniqueIndex:idx_batch_student"`
+	Batch     *Batch   `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+	Student   *Student `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+}
+
+func (_ *BatchRegistration) TableName() string {
+	return "batch_registrations"
 }

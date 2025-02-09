@@ -9,6 +9,7 @@ import (
 	"github.com/Imtiaz246/Thesis-Management-System/internal/server"
 	"github.com/Imtiaz246/Thesis-Management-System/internal/service"
 	batchservice "github.com/Imtiaz246/Thesis-Management-System/internal/service/batch"
+	teamservice "github.com/Imtiaz246/Thesis-Management-System/internal/service/team"
 	userservice "github.com/Imtiaz246/Thesis-Management-System/internal/service/user"
 	"github.com/Imtiaz246/Thesis-Management-System/pkg/app"
 	"github.com/Imtiaz246/Thesis-Management-System/pkg/helper/sid"
@@ -27,18 +28,21 @@ var repositorySet = wire.NewSet(
 	repository.NewTransaction,
 	repository.NewUserRepository,
 	repository.NewBatchRepository,
+	repository.NewTeamRepository,
 )
 
 var serviceSet = wire.NewSet(
 	service.NewService,
 	userservice.NewUserService,
 	batchservice.NewBatchService,
+	teamservice.NewTeamService,
 )
 
 var handlerSet = wire.NewSet(
 	handler.NewHandler,
 	handler.NewUserHandler,
 	handler.NewBatchHandler,
+	handler.NewTeamHandler,
 )
 
 var serverSet = wire.NewSet(

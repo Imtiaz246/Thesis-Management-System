@@ -1,6 +1,8 @@
 definitions:
   github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.BatchInfo:
     properties:
+      closed:
+        type: boolean
       createdAt:
         type: string
       createdBy:
@@ -12,6 +14,10 @@ definitions:
       maxTeacherPref:
         type: integer
       maxTeamMember:
+        type: integer
+      minCGPARequired:
+        type: number
+      minCHRequired:
         type: integer
       name:
         type: string
@@ -41,6 +47,10 @@ definitions:
         type: integer
       maxTeamMember:
         type: integer
+      minCGPARequired:
+        type: number
+      minCHRequired:
+        type: integer
       name:
         type: string
       preDefenceAt:
@@ -53,6 +63,7 @@ definitions:
     - defenceAt
     - maxTeacherPref
     - maxTeamMember
+    - minCHRequired
     - name
     - preDefenceAt
     - teamRegDeadline
@@ -179,6 +190,10 @@ definitions:
       maxTeacherPref:
         type: integer
       maxTeamMember:
+        type: integer
+      minCGPARequired:
+        type: number
+      minCHRequired:
         type: integer
       name:
         type: string
@@ -345,6 +360,84 @@ paths:
           schema:
             $ref: '#/definitions/github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.Response'
       summary: Update batch details
+      tags:
+      - Batch module
+  /batch/{id}/close:
+    put:
+      consumes:
+      - application/json
+      description: Closes a batch
+      parameters:
+      - description: Batch ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.Response'
+      summary: Close a batch
+      tags:
+      - Batch module
+  /batch/{id}/register:
+    post:
+      consumes:
+      - application/json
+      description: Registers the user to a batch
+      parameters:
+      - description: Batch ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.Response'
+      summary: Register to a batch
+      tags:
+      - Batch module
+  /batch/{id}/registers:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves a list of students registered to a batch
+      parameters:
+      - description: Batch ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.Response'
+      summary: Get list of students registered to a batch
+      tags:
+      - Batch module
+  /batch/open:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves a list of open batches
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.Response'
+      summary: Get list of open batches
       tags:
       - Batch module
   /login:
