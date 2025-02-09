@@ -64,12 +64,23 @@ func NewHTTPServer(
 		users.PUT("/profile", middleware.StrictAuth(jwt, logger), userHandler.UpdateProfile)
 	}
 	{
-		batchGroup := apiv1.Group("batch")
+		batchGroup := apiv1.Group("batches")
 		batchGroup.GET("/", batchHandler.ListBatch)
-		batchGroup.GET("/:id", batchHandler.GetBatch)
 		batchGroup.POST("/", middleware.StrictAuth(jwt, logger), batchHandler.CreateBatch)
+		batchGroup.GET("/open", batchHandler.ListOpenBatches)
+		batchGroup.GET("/:id", batchHandler.GetBatch)
 		batchGroup.PUT("/:id", middleware.StrictAuth(jwt, logger), batchHandler.UpdateBatch)
 		batchGroup.DELETE("/:id", middleware.StrictAuth(jwt, logger), batchHandler.DeleteBatch)
+		batchGroup.POST("/:id/register", middleware.StrictAuth(jwt, logger), batchHandler.RegisterToBatch)
+		batchGroup.GET("/:id/registers", middleware.StrictAuth(jwt, logger), batchHandler.ListBatchRegisters)
+		batchGroup.PUT("/:id/close", middleware.StrictAuth(jwt, logger), batchHandler.CloseBatch)
+
+		_ = batchGroup.Group("/:id/teams")
+		// List all teams
+		// Create a team
+		// Leave from a team
+		// Invite another student
+		// Select teacher
 	}
 
 	return s

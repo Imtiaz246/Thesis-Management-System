@@ -3,6 +3,7 @@ http:
   protocol: "http"
   host: 0.0.0.0
   port: 8000
+  mode: dev
 
 urls:
   front_end:
@@ -44,8 +45,8 @@ log:
   compress: true
 
 mailer:
-  smtp_auth:
-  smtp_port:
-  source_name:
-  service_email:
-  service_pass: 
+  smtp_auth: "smtp.gmail.com"
+  smtp_port: "587"
+  source_name: "IIUC Thesis management committee"
+  service_email: ""
+  service_pass: ""
