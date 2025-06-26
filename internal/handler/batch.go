@@ -32,9 +32,32 @@ func NewBatchHandler(handler *Handler, batchService batchservice.Service) *Batch
 // @Success 200 {object} v1.Response
 // @Router /batch [get]
 func (h *BatchHandler) ListBatch(ctx *gin.Context) {
-	batches, err := h.batchService.ListBatches(ctx)
+	batches, err := h.batchService.ListAllBatches(ctx)
 	if err != nil {
-		h.logger.WithContext(ctx).Error("batchService.ListBatches", zap.Error(err))
+		h.logger.WithContext(ctx).Error("batchService.ListAllBatches", zap.Error(err))
+		v1.HandleError(ctx, err, nil)
+		return
+	}
+
+	data := gin.H{
+		"batches": batches,
+	}
+	v1.HandleSuccess(ctx, data)
+}
+
+// ListOpenBatches godoc
+// @Summary Get list of open batches
+// @Schemes
+// @Description Retrieves a list of open batches
+// @Tags Batch module
+// @Accept json
+// @Produce json
+// @Success 200 {object} v1.Response
+// @Router /batch/open [get]
+func (h *BatchHandler) ListOpenBatches(ctx *gin.Context) {
+	batches, err := h.batchService.ListOpenBatches(ctx)
+	if err != nil {
+		h.logger.WithContext(ctx).Error("batchService.ListOpenBatches", zap.Error(err))
 		v1.HandleError(ctx, err, nil)
 		return
 	}
@@ -62,15 +85,6 @@ func (h *BatchHandler) CreateBatch(ctx *gin.Context) {
 		return
 	}
 
-	if req.TeamRegDeadline.After(req.PreDefenceAt) {
-		v1.HandleError(ctx, v1.ErrBadRequest, "Team registration deadline should be before pre-defence date")
-		return
-	}
-	if req.PreDefenceAt.After(req.DefenceAt) {
-		v1.HandleError(ctx, v1.ErrBadRequest, "Pre-defence date should be before defence date")
-		return
-	}
-
 	requesterUniId := GetUserUniIdFromCtx(ctx)
 	err := h.batchService.CreateBatch(ctx, requesterUniId, req)
 	if err != nil {
@@ -80,6 +94,90 @@ func (h *BatchHandler) CreateBatch(ctx *gin.Context) {
 	}
 
 	v1.HandleSuccess(ctx, "Batch created successfully")
+}
+
+// CloseBatch godoc
+// @Summary Close a batch
+// @Schemes
+// @Description Closes a batch
+// @Tags Batch module
+// @Accept json
+// @Produce json
+// @Param id path int true "Batch ID"
+// @Success 200 {object} v1.Response
+// @Router /batch/{id}/close [put]
+func (h *BatchHandler) CloseBatch(ctx *gin.Context) {
+	id, err := strconv.ParseUint(ctx.Param("id"), 10, 32)
+	if err != nil {
+		v1.HandleError(ctx, v1.ErrBadRequest, err.Error())
+		return
+	}
+
+	requesterUniId := GetUserUniIdFromCtx(ctx)
+	if err = h.batchService.CloseBatch(ctx, requesterUniId, uint(id)); err != nil {
+		v1.HandleError(ctx, err, nil)
+		return
+	}
+
+	v1.HandleSuccess(ctx, "Batch closed successfully")
+}
+
+// RegisterToBatch godoc
+// @Summary Register to a batch
+// @Schemes
+// @Description Registers the user to a batch
+// @Tags Batch module
+// @Accept json
+// @Produce json
+// @Param id path int true "Batch ID"
+// @Success 200 {object} v1.Response
+// @Router /batch/{id}/register [post]
+func (h *BatchHandler) RegisterToBatch(ctx *gin.Context) {
+	id, err := strconv.ParseUint(ctx.Param("id"), 10, 32)
+	if err != nil {
+		v1.HandleError(ctx, v1.ErrBadRequest, err.Error())
+		return
+	}
+
+	requesterUniId := GetUserUniIdFromCtx(ctx)
+	err = h.batchService.Register(ctx, requesterUniId, uint(id))
+	if err != nil {
+		h.logger.WithContext(ctx).Error("batchService.Register", zap.Error(err))
+		v1.HandleError(ctx, err, nil)
+		return
+	}
+
+	v1.HandleSuccess(ctx, "Registered to batch successfully")
+}
+
+// ListBatchRegisters godoc
+// @Summary Get list of students registered to a batch
+// @Schemes
+// @Description Retrieves a list of students registered to a batch
+// @Tags Batch module
+// @Accept json
+// @Produce json
+// @Param id path int true "Batch ID"
+// @Success 200 {object} v1.Response
+// @Router /batch/{id}/registers [get]
+func (h *BatchHandler) ListBatchRegisters(ctx *gin.Context) {
+	id, err := strconv.ParseUint(ctx.Param("id"), 10, 32)
+	if err != nil {
+		v1.HandleError(ctx, v1.ErrBadRequest, err.Error())
+		return
+	}
+
+	students, err := h.batchService.ListBatchRegisters(ctx, uint(id))
+	if err != nil {
+		h.logger.WithContext(ctx).Error("batchService.GetRegisteredStudents", zap.Error(err))
+		v1.HandleError(ctx, err, nil)
+		return
+	}
+
+	data := gin.H{
+		"students": students,
+	}
+	v1.HandleSuccess(ctx, data)
 }
 
 // GetBatch godoc

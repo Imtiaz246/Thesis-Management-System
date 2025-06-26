@@ -15,7 +15,11 @@ type BatchRepository interface {
 	Delete(ctx context.Context, batchID uint) error
 	GetById(ctx context.Context, batchID uint) (*model.Batch, error)
 	GetByName(ctx context.Context, name string) (*model.Batch, error)
-	GetAllWithCreatorInfo(ctx context.Context) ([]*model.Batch, error)
+	RegisterStudent(ctx context.Context, batchID, studentID uint) error
+	GetRegisteredStudents(ctx context.Context, batchID uint) ([]*model.Student, error)
+	IsBatchRegisterer(ctx context.Context, batchID, studentID uint) (bool, error)
+	ListAllBatches(ctx context.Context) ([]*model.Batch, error)
+	ListOpenBatches(ctx context.Context) ([]*model.Batch, error)
 	CheckBatchExistence(ctx context.Context, batchName string) (bool, error)
 }
 
@@ -52,7 +56,7 @@ func (r *batchRepository) Delete(ctx context.Context, batchID uint) error {
 
 func (r *batchRepository) GetById(ctx context.Context, batchID uint) (*model.Batch, error) {
 	var batch model.Batch
-	if err := r.DB(ctx).First(&batch, batchID).Error; err != nil {
+	if err := r.DB(ctx).Preload("CreatedBy").Where("id = ?", batchID).First(&batch).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, v1.ErrBatchNotFound
 		}
@@ -63,7 +67,7 @@ func (r *batchRepository) GetById(ctx context.Context, batchID uint) (*model.Bat
 
 func (r *batchRepository) GetByName(ctx context.Context, name string) (*model.Batch, error) {
 	var batch model.Batch
-	if err := r.db.WithContext(ctx).Where("name = ?", name).First(&batch).Error; err != nil {
+	if err := r.db.WithContext(ctx).Preload("CreatedBy").Where("name = ?", name).First(&batch).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, v1.ErrBatchNotFound
 		}
@@ -72,18 +76,74 @@ func (r *batchRepository) GetByName(ctx context.Context, name string) (*model.Ba
 	return &batch, nil
 }
 
-func (r *batchRepository) GetAllWithCreatorInfo(ctx context.Context) ([]*model.Batch, error) {
+func (r *batchRepository) ListAllBatches(ctx context.Context) ([]*model.Batch, error) {
 	var batches []*model.Batch
-	if err := r.DB(ctx).Preload("CreatedBy").Find(&batches).Error; err != nil {
+	if err := r.DB(ctx).Find(&batches).Error; err != nil {
 		return nil, err
 	}
+
+	return batches, nil
+}
+
+func (r *batchRepository) ListOpenBatches(ctx context.Context) ([]*model.Batch, error) {
+	var batches []*model.Batch
+	if err := r.DB(ctx).Find(&batches, "closed = ?", false).Error; err != nil {
+		return nil, err
+	}
+
 	return batches, nil
 }
 
 func (r *batchRepository) CheckBatchExistence(ctx context.Context, batchName string) (bool, error) {
-	var count int64
-	if err := r.DB(ctx).Model(&model.Batch{}).Where("name = ?", batchName).Count(&count).Error; err != nil {
+	_, err := r.GetByName(ctx, batchName)
+	if err != nil {
+		if errors.Is(err, v1.ErrBatchNotFound) {
+			return false, nil
+		}
 		return false, err
 	}
-	return count > 0, nil
+	return true, nil
+}
+
+func (r *batchRepository) RegisterStudent(ctx context.Context, batchID, studentID uint) error {
+	batchRegistration := &model.BatchRegistration{
+		BatchID:   batchID,
+		StudentID: studentID,
+	}
+
+	if err := r.DB(ctx).First(batchRegistration, *batchRegistration).Error; err == nil {
+		return v1.ErrAlreadyRegForBatch
+	} else if !errors.Is(err, gorm.ErrRecordNotFound) {
+		return err
+	}
+
+	return r.DB(ctx).Create(batchRegistration).Error
+}
+
+func (r *batchRepository) GetRegisteredStudents(ctx context.Context, batchID uint) ([]*model.Student, error) {
+	var batchRegistrations []*model.BatchRegistration
+	if err := r.DB(ctx).Where("batch_id = ?", batchID).Preload("Student").Find(&batchRegistrations).Error; err != nil {
+		return nil, err
+	}
+	var students []*model.Student
+	for _, batchRegistration := range batchRegistrations {
+		students = append(students, batchRegistration.Student)
+	}
+
+	return students, nil
+}
+
+func (r *batchRepository) IsBatchRegisterer(ctx context.Context, batchID, studentID uint) (bool, error) {
+	batchRegistration := &model.BatchRegistration{
+		BatchID:   batchID,
+		StudentID: studentID,
+	}
+	if err := r.DB(ctx).First(batchRegistration).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return false, nil
+		}
+		return false, err
+	}
+
+	return true, nil
 }

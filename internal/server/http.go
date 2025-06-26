@@ -20,6 +20,7 @@ func NewHTTPServer(
 	jwt *token.JWT,
 	userHandler *handler.UserHandler,
 	batchHandler *handler.BatchHandler,
+	teamHandler handler.TeamHandler,
 ) *http.Server {
 	gin.SetMode(gin.ReleaseMode)
 	s := http.NewServer(
@@ -64,12 +65,30 @@ func NewHTTPServer(
 		users.PUT("/profile", middleware.StrictAuth(jwt, logger), userHandler.UpdateProfile)
 	}
 	{
-		batchGroup := apiv1.Group("batch")
+		batchGroup := apiv1.Group("batches")
 		batchGroup.GET("/", batchHandler.ListBatch)
-		batchGroup.GET("/:id", batchHandler.GetBatch)
 		batchGroup.POST("/", middleware.StrictAuth(jwt, logger), batchHandler.CreateBatch)
+		batchGroup.GET("/open", batchHandler.ListOpenBatches)
+		batchGroup.GET("/:id", batchHandler.GetBatch)
 		batchGroup.PUT("/:id", middleware.StrictAuth(jwt, logger), batchHandler.UpdateBatch)
 		batchGroup.DELETE("/:id", middleware.StrictAuth(jwt, logger), batchHandler.DeleteBatch)
+		batchGroup.POST("/:id/register", middleware.StrictAuth(jwt, logger), batchHandler.RegisterToBatch)
+		batchGroup.GET("/:id/registers", middleware.StrictAuth(jwt, logger), batchHandler.ListBatchRegisters)
+		batchGroup.PUT("/:id/close", middleware.StrictAuth(jwt, logger), batchHandler.CloseBatch)
+
+		// TODO: separate team related routes from batch routes
+		{
+			teamGroup := batchGroup.Group("/:batch_id/teams", middleware.StrictAuth(jwt, logger))
+			teamGroup.POST("/", teamHandler.CreateTeam)                                                        // student has to be registered in batch
+			teamGroup.GET("/joined", teamHandler.GetJoinedTeam)                                                // student has to be team member
+			teamGroup.PUT("/:team_id/leave", teamHandler.LeaveTeam)                                            // team member
+			teamGroup.POST("/:team_id/invitations/send_to/:target_student_uni_id", teamHandler.SendInvitation) // requester has to be team member, target user has to be registered in batch
+			teamGroup.PUT("/:team_id/invitations/:invitation_id/reject", teamHandler.RejectInvitation)         // team invitation has to exits or no exits always pass
+			teamGroup.PUT("/:team_id/invitations/:invitation_id/accept", teamHandler.AcceptInvitation)         // team invitation has to exists
+			teamGroup.GET("/:team_id/invitations", teamHandler.ListInvitations)                                // all team invitation
+
+			// TODO: teacher selection specific routers
+		}
 	}
 
 	return s

@@ -93,6 +93,29 @@ const docTemplate = `{
                 }
             }
         },
+        "/batch/open": {
+            "get": {
+                "description": "Retrieves a list of open batches",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Batch module"
+                ],
+                "summary": "Get list of open batches",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/batch/{id}": {
             "get": {
                 "description": "Retrieves details of a batch",
@@ -175,6 +198,102 @@ const docTemplate = `{
                     "Batch module"
                 ],
                 "summary": "Delete batch",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Batch ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/batch/{id}/close": {
+            "put": {
+                "description": "Closes a batch",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Batch module"
+                ],
+                "summary": "Close a batch",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Batch ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/batch/{id}/register": {
+            "post": {
+                "description": "Registers the user to a batch",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Batch module"
+                ],
+                "summary": "Register to a batch",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Batch ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/batch/{id}/registers": {
+            "get": {
+                "description": "Retrieves a list of students registered to a batch",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Batch module"
+                ],
+                "summary": "Get list of students registered to a batch",
                 "parameters": [
                     {
                         "type": "integer",
@@ -411,6 +530,9 @@ const docTemplate = `{
         "github_com_Imtiaz246_Thesis-Management-System_internal_apis_v1.BatchInfo": {
             "type": "object",
             "properties": {
+                "closed": {
+                    "type": "boolean"
+                },
                 "createdAt": {
                     "type": "string"
                 },
@@ -427,6 +549,12 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "maxTeamMember": {
+                    "type": "integer"
+                },
+                "minCGPARequired": {
+                    "type": "number"
+                },
+                "minCHRequired": {
                     "type": "integer"
                 },
                 "name": {
@@ -466,6 +594,7 @@ const docTemplate = `{
                 "defenceAt",
                 "maxTeacherPref",
                 "maxTeamMember",
+                "minCHRequired",
                 "name",
                 "preDefenceAt",
                 "teamRegDeadline"
@@ -478,6 +607,12 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "maxTeamMember": {
+                    "type": "integer"
+                },
+                "minCGPARequired": {
+                    "type": "number"
+                },
+                "minCHRequired": {
                     "type": "integer"
                 },
                 "name": {
@@ -676,6 +811,12 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "maxTeamMember": {
+                    "type": "integer"
+                },
+                "minCGPARequired": {
+                    "type": "number"
+                },
+                "minCHRequired": {
                     "type": "integer"
                 },
                 "name": {

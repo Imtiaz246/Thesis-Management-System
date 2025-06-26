@@ -40,6 +40,18 @@ func (m *Migrate) Start(ctx context.Context) error {
 	if err := m.db.AutoMigrate(&model.Batch{}); err != nil {
 		m.log.Error("Failed to migrate Batch")
 	}
+	if err := m.db.AutoMigrate(&model.BatchRegistration{}); err != nil {
+		m.log.Error("Failed to migrate BatchRegistration")
+	}
+	if err := m.db.AutoMigrate(&model.Team{}); err != nil {
+		m.log.Error("Failed to migrate Team")
+	}
+	if err := m.db.AutoMigrate(&model.TeamMember{}); err != nil {
+		m.log.Error("Failed to migrate TeamMember")
+	}
+	if err := m.db.AutoMigrate(&model.TeamTeacher{}); err != nil {
+		m.log.Error("Failed to migrate TeamTeacher")
+	}
 	m.log.Info("AutoMigrate success")
 	os.Exit(0)
 	return nil
