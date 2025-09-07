@@ -19,7 +19,7 @@ func NewTeamHandler(handler *Handler, teamService teamservice.Service) *TeamHand
 }
 
 func (h *TeamHandler) CreateTeam(ctx *gin.Context) {
-	batchId, err := ParseUintParam(ctx, "batch_id")
+	batchId, err := ParseUintParam(ctx, "id")
 	if err != nil {
 		v1.HandleError(ctx, v1.ErrBadRequest, err.Error())
 		return
@@ -42,7 +42,7 @@ func (h *TeamHandler) CreateTeam(ctx *gin.Context) {
 }
 
 func (h *TeamHandler) GetJoinedTeam(ctx *gin.Context) {
-	batchId, err := ParseUintParam(ctx, "batch_id")
+	batchId, err := ParseUintParam(ctx, "id")
 	if err != nil {
 		v1.HandleError(ctx, v1.ErrBadRequest, err.Error())
 		return
@@ -73,7 +73,7 @@ func (h *TeamHandler) LeaveTeam(ctx *gin.Context) {
 }
 
 func (h *TeamHandler) SendInvitation(ctx *gin.Context) {
-	batchId, err := ParseUintParam(ctx, "batch_id")
+	batchId, err := ParseUintParam(ctx, "id")
 	if err != nil {
 		v1.HandleError(ctx, v1.ErrBadRequest, err.Error())
 		return
@@ -107,7 +107,7 @@ func (h *TeamHandler) RejectInvitation(ctx *gin.Context) {
 }
 
 func (h *TeamHandler) AcceptInvitation(ctx *gin.Context) {
-	batchId, err := ParseUintParam(ctx, "batch_id")
+	batchId, err := ParseUintParam(ctx, "id")
 	if err != nil {
 		v1.HandleError(ctx, v1.ErrBadRequest, err.Error())
 		return

@@ -21,7 +21,6 @@ import (
 	"github.com/Imtiaz246/Thesis-Management-System/pkg/server/http"
 	"github.com/Imtiaz246/Thesis-Management-System/pkg/token"
 	"github.com/google/wire"
-	"github.com/grafana/grafana/pkg/api/response"
 	"github.com/spf13/viper"
 )
 
@@ -43,7 +42,10 @@ func NewWire(viperViper *viper.Viper, logger *log.Logger) (*app.App, func(), err
 	batchRepository := repository.NewBatchRepository(repositoryRepository)
 	batchService := batch.NewBatchService(serviceService, userRepository, batchRepository)
 	batchHandler := handler.NewBatchHandler(handlerHandler, batchService)
-	httpServer := server.NewHTTPServer(logger, viperViper, jwt, userHandler, batchHandler)
+	teamRepository := repository.NewTeamRepository(repositoryRepository)
+	teamService := team.NewTeamService(teamRepository, serviceService)
+	teamHandler := handler.NewTeamHandler(handlerHandler, teamService)
+	httpServer := server.NewHTTPServer(logger, viperViper, jwt, userHandler, batchHandler, teamHandler)
 	job := server.NewJob(logger)
 	appApp := newApp(httpServer, job)
 	return appApp, func() {
@@ -56,7 +58,7 @@ var repositorySet = wire.NewSet(repository.NewDB, repository.NewRedis, repositor
 
 var serviceSet = wire.NewSet(service.NewService, user.NewUserService, batch.NewBatchService, team.NewTeamService)
 
-var handlerSet = wire.NewSet(handler.NewHandler, handler.NewUserHandler, handler.NewBatchHandler, handler.NewTeamHandler())
+var handlerSet = wire.NewSet(handler.NewHandler, handler.NewUserHandler, handler.NewBatchHandler, handler.NewTeamHandler)
 
 var serverSet = wire.NewSet(server.NewHTTPServer, server.NewJob, server.NewTask)
 

@@ -20,7 +20,7 @@ func NewHTTPServer(
 	jwt *token.JWT,
 	userHandler *handler.UserHandler,
 	batchHandler *handler.BatchHandler,
-	teamHandler handler.TeamHandler,
+	teamHandler *handler.TeamHandler,
 ) *http.Server {
 	gin.SetMode(gin.ReleaseMode)
 	s := http.NewServer(
@@ -78,7 +78,7 @@ func NewHTTPServer(
 
 		// TODO: separate team related routes from batch routes
 		{
-			teamGroup := batchGroup.Group("/:batch_id/teams", middleware.StrictAuth(jwt, logger))
+			teamGroup := batchGroup.Group("/:id/teams", middleware.StrictAuth(jwt, logger))
 			teamGroup.POST("/", teamHandler.CreateTeam)                                                        // student has to be registered in batch
 			teamGroup.GET("/joined", teamHandler.GetJoinedTeam)                                                // student has to be team member
 			teamGroup.PUT("/:team_id/leave", teamHandler.LeaveTeam)                                            // team member
